@@ -1,0 +1,3 @@
+# Sample list of FileAreas (include it to main $FIDOCONFIG)
+#FileArea NODEDIFF   INSTALLDIR/fido/nodediff LINK-NODE-ADDRESS -lw 100 -g official -d "Nodediffs" -p 60
+#FileArea PNT Passthrough LINK-NODE-ADDRESS -g local -d "Local area" -h

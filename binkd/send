@@ -1,0 +1,8 @@
+#!/bin/sh
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config scan ; sync
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config pack ; sync
+INSTALLDIR/usr/sbin/binkd -p -P 2:5020/828 INSTALLDIR/usr/etc/binkd.cfg ; sync
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config toss ; sync
+INSTALLDIR/usr/bin/htick -c INSTALLDIR/usr/etc/fido/config toss ; sync
+INSTALLDIR/usr/bin/htick -c INSTALLDIR/usr/etc/fido/config announce ; sync
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config link ; sync

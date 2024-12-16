@@ -1,0 +1,180 @@
+#!/bin/bash
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+# Dayly statistics reports script genetation for fidoip node
+# Run this script dayly by cron at 23:55 each day
+# Install these packages before: lshw hwinfo net-tools iputils-ping
+# or install other prorgams which mentioned below and uncomment raws with this programs.
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files 
+SEDT="sed"  # Sed program type
+IFCONFIG=`find / -type f -perm 755 -name 'ifconfig' -print  2>/dev/null`
+HWINFO=`find / -type f -perm 755 -name 'hwinfo' -print  2>/dev/null`
+LSHW=`find / -type f -perm 755 -name 'lshw' -print  2>/dev/null`
+
+if [ -e "$IFCONFIG" ]; then
+echo
+else
+echo  "=================================================="
+echo "ifconfig utility is not installed. Please install it from repository."
+echo "Needs to install packages: net-tools iputils-ping hwinfo lshw."
+echo "Then start this script again."
+echo  "=================================================="
+sleep 3
+fi
+
+if [ -e "$HWINFO" ]; then
+echo
+else
+echo  "=================================================="
+echo "ifconfig utility is not installed. Please install it from repository."
+echo "Needs to install packages: net-tools iputils-ping hwinfo lshw."
+echo "Then start this script again."
+echo  "=================================================="
+sleep 3
+fi
+
+if [ -e "$LSHW" ]; then
+echo
+else
+echo  "=================================================="
+echo "ifconfig utility is not installed. Please install it from repository."
+echo "Needs to install packages: net-tools iputils-ping hwinfo lshw."
+echo "Then start this script again."
+echo  "=================================================="
+sleep 3
+fi
+
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+
+if [ -e INSTALLDIR/usr/etc/fido/routing.lst ]; then
+echo
+else
+echo  "=================================================="
+echo "FIDO node configuration doesnt't exist. "
+echo "To create run setup_node.bash first."
+echo  "=================================================="
+sleep 1
+rm -rf $TMP
+exit
+fi
+
+NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
+NODENUMBER1=`echo $NODENUMBER | $SEDT 's|/|\\\/|g'`
+SHORTNODENAME=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+
+INSTALLDIR/usr/bin/binkdstat.pl -d1 >  INSTALLDIR/fido/binkd-dayly.rpt
+INSTALLDIR/usr/bin/hptlogstat.pl 1 -traffic > INSTALLDIR/fido/hpt-dayly.rpt
+INSTALLDIR/usr/bin/st_htick.pl 1 > INSTALLDIR/fido/htick-dayly.rpt
+date > INSTALLDIR/fido/system-dayly.rpt
+echo "" >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "                Node runs on:                                                  " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+uname -a  2>/dev/null >> INSTALLDIR/fido/system-dayly.rpt
+cat /proc/cpuinfo 2>/dev/null  >>  INSTALLDIR/fido/system-dayly.rpt
+#lspci  >> INSTALLDIR/fido/system-dayly.rpt
+#lsusb -t 2>/dev/null >> INSTALLDIR/fido/system-dayly.rpt
+#lsusb  >> INSTALLDIR/fido/system-dayly.rpt
+#find /sys | grep drivers.* >> INSTALLDIR/fido/system-dayly.rpt
+#dmidecode -t system | grep -v dmidecode | grep -v SMBIOS | grep -v Handle | head -n10  >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+#BOOTPARAM=`cat /proc/cmdline` ; echo "Kernel Boot Options: "$BOOTPARAM"" >> INSTALLDIR/fido/system-dayly.rpt
+#echo  >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "                               System Uptime:                               " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+uptime  2>/dev/null >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "                               Memory and running processes:            " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+top -w 80 -b -n 1  2>/dev/null | grep -v "load average" >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "                               Network statistics:                         " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+$IFCONFIG -a 2>/dev/null  >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+#cat /proc/net/dev >> INSTALLDIR/fido/system-dayly.rpt
+#echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################">> INSTALLDIR/fido/system-dayly.rpt
+echo "                               Disk statistics:                                  " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+df -h 2>/dev/null >> INSTALLDIR/fido/system-dayly.rpt 2>/dev/null
+echo >> INSTALLDIR/fido/system-dayly.rpt
+#vmstat -D >> INSTALLDIR/fido/system-dayly.rpt 2>/dev/null
+#echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "                               Log information:                              " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+#echo "System messages:" >> INSTALLDIR/fido/system-dayly.rpt
+#dmesg | tail -n40 >> INSTALLDIR/fido/system-dayly.rpt
+#echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "BINKD messages:" >> INSTALLDIR/fido/system-dayly.rpt
+tail -n70 INSTALLDIR/fido/binkd.log >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "HPT messages:" >> INSTALLDIR/fido/system-dayly.rpt
+tail -n70 INSTALLDIR/fido/hpt.log >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "HTICK messages:" >> INSTALLDIR/fido/system-dayly.rpt
+tail -n70 INSTALLDIR/fido/htick.log >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "                                Loaded kernel modules:              " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "" >> INSTALLDIR/fido/system-dayly.rpt
+cat /proc/modules 2>/dev/null >> INSTALLDIR/fido/system-dayly.rpt
+echo "" >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+echo "                                Other sysinfo:                                  " >> INSTALLDIR/fido/system-dayly.rpt
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+#vmstat -a -s >> INSTALLDIR/fido/system-dayly.rpt
+#echo >> INSTALLDIR/fido/system-dayly.rpt
+#cat /proc/stat >> INSTALLDIR/fido/system-dayly.rpt
+#cat /proc/pagetypeinfo >> INSTALLDIR/fido/system-dayly.rpt
+$LSHW -short  2>/dev/null >> INSTALLDIR/fido/system-dayly.rpt
+echo >> INSTALLDIR/fido/system-dayly.rpt
+$HWINFO --listmd --short  2>/dev/null >> INSTALLDIR/fido/system-dayly.rpt 
+echo "###############################################################################" >> INSTALLDIR/fido/system-dayly.rpt
+#dmidecode -t chassis | grep -v dmidecode | grep -v SMBIOS | grep -v Handle >> INSTALLDIR/fido/system-dayly.rpt 
+#dmidecode -t bios | grep -v dmidecode | grep -v SMBIOS | grep -v Handle >> INSTALLDIR/fido/system-dayly.rpt 
+#dmidecode -t memory | grep -v dmidecode | grep -v SMBIOS | grep -v Handle >> INSTALLDIR/fido/system-dayly.rpt 
+
+ICONV=`which iconv`
+if [ -x "$ICONV" ];then 
+iconv -t ibm866 INSTALLDIR/fido/system-dayly.rpt > INSTALLDIR/fido/system-dayly.rpt.tmp
+cat INSTALLDIR/fido/system-dayly.rpt.tmp > INSTALLDIR/fido/system-dayly.rpt  
+fi
+echo  "=================================================="
+echo "Generating dayly statistics of binkd, hpt, htick and system"
+echo "and post it to "$SHORTNODENAME".robots."
+echo  "=================================================="
+
+export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config 
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Mailer statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/binkd-dayly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Tosser statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/hpt-dayly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Files statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/htick-dayly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "System statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/system-dayly.rpt
+
+INSTALLDIR/usr/bin/toss
+
+rm -rf $TMP
+
+

@@ -1,0 +1,17 @@
+
+[1;32m==============================================================================[0;39m
+[1;32m Welcome to fidoip client(point installation)           [0;39m
+[1;32m==============================================================================[0;39m
+ [1;29mThe fidoip for point is installed on host now.[0;29m
+ Login as user "[1;29mUser[0;29m" for whom you are installed fidoip and use FIDONet. 
+ If you're new to fidoip, please visit "[1;29mhttp://sf.net/apps/mediawiki/fidoip[0;29m.
+ [1;29mAfter you login, try the following commands:[0;29m
+[1;29m recv[0;29m...... receive FIDONet messages from your node
+[1;29m send[0;29m ..... receive and send FIDONet message with your node
+[1;29m rs [0;29m....... same as above 
+[1;29m ge[0;29m........ to edit FIDO messages in GoldEd editor in koi8-r codepage
+[1;29m g[0;29m......... to edit FIDO messages in GoldEd editor in utf8 codepage via screen
+[1;29m gl[0;29m........ to edit FIDO messages in GoldEd editor in utf8 via luit
+[1;29m fidohelp[0;29m.. this command - brief list of available commands  
+[1;32m Use "checkhpt.sh | more" command to check your tosser configuration file [0;39m
+[1;32m==============================================================================[0;39m

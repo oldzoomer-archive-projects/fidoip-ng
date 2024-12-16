@@ -1,0 +1,165 @@
+#!/bin/bash
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+# Remove point from configuration files
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
+SEDT="sed"  # Sed program type
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+cat INSTALLDIR/usr/etc/binkd.cfg | grep "####" | grep " point " > $TMP/point.list.tmp
+cat $TMP/point.list.tmp | $SEDT "s|point.*||g" | $SEDT "s/node//g" | $SEDT "s| - | |g" | $SEDT "s|####||g" >  $TMP/point.info.tmp
+POINTINFO=`cat $TMP/point.info.tmp`
+NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
+SYSOPNAME=`cat INSTALLDIR/usr/etc/binkd.cfg | grep "sysop " | $SEDT "s|sysop ||g" | $SEDT 's|"||g'`
+SYSOPNAME1=`echo $SYSOPNAME | $SEDT "s|_| |g" `
+SHORTNODENAME=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+NODENUMBER1=`echo $NODENUMBER | $SEDT 's|/|\\\/|g'`
+station=`cat INSTALLDIR/usr/etc/binkd.cfg | grep sysname | $SEDT "s/sysname//g" | $SEDT 's|"||g' | $SEDT 's| ||g' `
+
+
+NUMBER=`cat $TMP/point.info.tmp | wc -l`
+
+if [ $NUMBER = "0" ];then
+echo  "=================================================="
+echo "No point added to INSTALLDIR/usr/etc/fido/point.lst"
+echo  "=================================================="
+rm -rf $TMP
+exit
+fi
+
+INSTALLDIR/usr/bin/listpoint
+echo
+echo  "#=================================================="
+echo "# $NUMBER point (excluding system point $NODENUMBER.1 ) "
+echo "# in INSTALLDIR/usr/etc/binkd.cfg"
+echo  "#=================================================="
+echo "# Mailer informaion regarging this point in configuration file "
+echo "# INSTALLDIR/usr/etc/binkd.cfg:"
+echo "# Point number:     Password for session:"
+echo  "#=================================================="
+i=1
+NUMBER=$(($NUMBER+1))
+while [ "$i" -ne "$NUMBER" ]
+do
+echo " "$i" `$SEDT -n ""$i"p" $TMP/point.info.tmp`"
+i=$(($i+1))
+done
+echo
+echo  "#================================================="
+echo "Enter number of point to choose variant from the list (or press"
+echo "Ctrl-C). All information regarding selected point will be deleted:"
+echo  "#================================================="
+read -p " ?" answer
+
+if [ -z "$answer" ]
+then
+echo 'You input nothing.'
+echo 'Please run this script again and enter number to remove.'
+rm -rf $TMP
+exit
+fi
+
+# Declaration of allowed symbols for user input scrubbing
+declare -r AllowedChars="1234567890"
+# Checking user input&scrubbing
+ScrubbedCheck="${answer//[^$AllowedChars]/}"
+if [ "$answer" = "$ScrubbedCheck" ]; then
+echo
+else
+echo
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$AllowedChars""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+rm -rf $TMP
+exit
+fi
+
+if [ "$answer" -lt "$NUMBER" -a "$answer" -gt 0 ]; then
+echo
+echo  "#================================================="
+echo "Choosed point to delete:"
+echo  "#================================================="
+echo " "$answer" `$SEDT -n ""$answer"p" $TMP/point.info.tmp`"
+$SEDT -n ""$answer"p" $TMP/point.info.tmp > $TMP/point.tmp
+POINTINFO=`cat $TMP/point.tmp`
+POINTNAME=`echo $POINTINFO | $SEDT "s| .*||g" | $SEDT "s|##.*||g"`
+# Inserting \ before \ and . as dot alway brings problems with regexp
+POINTNAME1=`echo $POINTNAME | $SEDT 's|/|\\\/|g' | $SEDT "s|\.|\\\.|" `
+echo  "#================================================="
+echo "Delete point "$POINTNAME"?" 
+echo "OK? "
+echo "[y/n]"
+read reply
+echo
+if [ "$reply" = "y" ];
+	then 
+echo
+echo  "#================================================="
+echo "# Removing point "$POINTNAME" from configuration files..."
+echo  "# ================================================="
+
+
+PASSNAME=`echo $POINTINFO | $SEDT "s|##.*||g" | $SEDT "s|$POINTNAME1 ||g" | $SEDT "s| .*||g" `
+ARR0=(" ""$PASSNAME"" ")
+LINKNAME=`cat INSTALLDIR/usr/etc/fido/point.lst | grep -B 3 -e "${ARR0[*]}" | grep "Link " |   $SEDT "s|Link ||" `
+LINKNAME1=`echo $LINKNAME | $SEDT "s| |\ |g"`
+ARR1=("\ "$LINKNAME1"\ ")
+ARR2=("\ ""$POINTNAME1")
+
+$SEDT -i -E "/${ARR2[*]}\ /d" INSTALLDIR/usr/etc/binkd.cfg
+$SEDT -i -E "/${ARR2[*]}\ /d" INSTALLDIR/usr/etc/fido/readonly.lst
+$SEDT -i -E "s|${ARR2[*]}\ |\ |g" INSTALLDIR/usr/etc/fido/config
+$SEDT -i -E "/${ARR1[*]}/,+3d" INSTALLDIR/usr/etc/fido/point.lst
+
+echo "INSTALLDIR/usr/etc/binkd.cfg" 
+echo "INSTALLDIR/usr/etc/fido/config"
+echo "INSTALLDIR/usr/etc/fido/point.lst"
+echo "INSTALLDIR/usr/etc/fido/readonly.lst"
+echo  "=================================================="
+echo
+cp INSTALLDIR/usr/etc/fidoip/node/announcerem.template-node $TMP/announcerem.template-node
+$SEDT -i "s|POINT-ADDRESS|$POINTNAME1|g" $TMP/announcerem.template-node
+
+echo  "#=================================================="
+echo "# Generating announce messages for point "$POINTNAME" removing"
+echo  "#=================================================="
+echo
+export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "http://sourceforge.net/apps/mediawiki/fidoip" -s "Point "$POINTNAME" removed" -e ""$SHORTNODENAME".official" -d INSTALLDIR/fido/localinb $TMP/announcerem.template-node
+INSTALLDIR/usr/bin/toss
+
+echo  "================================================="
+echo "Done."
+echo  "================================================="
+
+rm -rf $TMP
+fi
+elif [ "$reply" = "n" ];
+	then 
+rm -rf $TMP
+echo "Please run this script again."
+fi
+
+
+
+
+

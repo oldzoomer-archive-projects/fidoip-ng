@@ -1,0 +1,4 @@
+# Описание конференций
+# echoarea <AREATAG> {</путь/к/файлам> [-b формат] | passthrough} [-dupecheck действие] [-dupehistory количество дней] [-a наш адрес] [линк1] [линк2 ...]
+#echoarea ECHO.AREA.READ  INSTALLDIR/fido/msgbasedir/echo.area.read -b squish -dupecheck del -dupehistory 14 -a MYNODE-ADDRESS MYNODE-ADDRESS.1
+#echoarea ECHO.AREA.PASS passthrough -dupecheck del -dupehistory 14 -a MYNODE-ADDRESS MYNODE-ADDRESS.1

@@ -1,0 +1,25 @@
+ 
+[1;32m==============================================================================[0;39m
+[1;32m Welcome to fidoip NMS (Node Management System)                               [0;39m
+[1;32m==============================================================================[0;39m
+ [1;29mThe fidoip NMS system is running on host now.[0;29m
+ Login as "[1;29mUSER[0;29m" via network, sudo or su and run command to manage node. 
+ If you're new to fidoip, please visit "[1;29mhttps://sf.net/projects/fidoip[0;29m.
+ [1;29mAfter you login, try the following commands:[0;29m
+[1;29m addpoint[0;29m..... to add new point to node configuration files
+[1;29m addlink[0;29m ..... to add new link
+[1;29m addread [0;29m..... to set read-only for point or node
+[1;29m binkdsrv [0;29m.... to restart binkd mailer daemon
+[1;29m removepoint [0;29m. to remove point from node congiuration files
+[1;29m removelink [0;29m.. to remove link
+[1;29m removeread [0;29m.. to unset read-only for point or node
+[1;29m listpoint [0;29m... to list all points on the station
+[1;29m listlink [0;29m.... to list all links on the station    
+[1;29m listread[0;29m..... to list all read-only sets
+[1;29m viewpoint[0;29m.... to view settings of selected point
+[1;29m fpasswd[0;29m...... to change point's password
+[1;29m ge[0;29m........... to edit FIDONet messages in GoldEd editor in koi8-r codepage
+[1;29m g[0;29m............ to edit FIDONet messages in GoldEd editor in utf8 codepage
+[1;29m rs;send[0;29m...... to exchange data and poll with links manually 
+[1;32m When finished, use "checkhpt.sh | more" command to check your configuration files [0;39m
+[1;32m==============================================================================[0;39m

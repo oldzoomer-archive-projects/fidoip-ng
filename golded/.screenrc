@@ -1,0 +1,3 @@
+startup_message off                                                     
+defencoding koi8-r                                                                    
+screen sh -c "LANG=ru_RU.KOI8-R INSTALLDIR/usr/bin/ge"

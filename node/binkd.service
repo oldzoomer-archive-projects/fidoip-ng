@@ -1,0 +1,16 @@
+[Unit]
+Description=Ftn mailer binkd start service
+After=network.target
+
+[Service]
+Type=forking
+User=USER
+Group=GROUP
+ExecStart=INSTALLDIR/usr/etc/rc.d/bnkd.srv start
+ExecStop=INSTALLDIR/usr/etc/rc.d/bnkd.srv stop
+ExecRestart=INSTALLDIR/usr/etc/rc.d/bnkd.srv restart
+ExecReload=INSTALLDIR/usr/etc/rc.d/bnkd.srv reload
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,8 @@
+binkd: Binkd (Binkley daemon)
+binkd:
+binkd: Binkd (Binkley daemon) is a next generation Fidonet mailer designed 
+binkd: exclusively to operate via TCP/IP networks. As a FTN-compatible  
+binkd: internet daemon, it makes possible efficient utilization of TCP/IP
+binkd: protocol suite as a transport layer in FTN-based (Fido Technology 
+binkd: Network) networks. 
+binkd:

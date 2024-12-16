@@ -1,0 +1,11 @@
+
+Link  LINK-NODE-NAME 
+Aka LINK-NODE-ADDRESS  
+ouraka MYNODE-ADDRESS 
+password LINK-NODE-PASSWORD 
+areafixpwd LINK-NODE-PASSWORD  
+filefixpwd LINK-NODE-PASSWORD 
+areafixAutoCreate on 
+filefixAutoCreate on 
+route direct LINK-NODE-ADDRESS LINK-NODE-ADDRESS.* 
+

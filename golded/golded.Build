@@ -1,0 +1,160 @@
+#!/bin/sh
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+########################
+# Golded+ Fido Editor package build script 
+# You could do build automatically fresh version if uncomment line with git below.  
+# Depens on character set conversion  utility iconv or library libiconv.
+########################
+
+# Set initial variables:
+
+NAME=golded			# Program name
+PNAME=golded			# Package name (Useful for changing case, removing "-"s, etc.)
+VERSION=1.1.5-b		# Program version
+PVERSION=		# Package version (Useful for removing "-"s, CVS builds, etc.)
+ARCH=$(uname -m)	# Package architecture
+SYSOS=$(uname -s) # Package architecture
+OSTYPE=$(uname -o 2>/dev/null || uname -p) 
+BUILD=${BUILD:-fido_my1}	# Build number plus packager initials (use your own)
+
+CWD=$(pwd)
+HOMEDIR=$(cd ../../; pwd)
+TMP=$(mktemp -d)	# Location to compile the source
+PKG=$TMP/package-$NAME	# Location to build the package (use "package-$NAME" to avoid poss. conflicts)
+IDN=$( id -un)
+IDG=$(id -gn)
+
+
+# Define compiler flags based on intended architecture:
+# Can easily expand this for alternate compilations
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+fi
+
+mkdir -p "$PKG"		# Make sure $PKG and $TMP (-p switch) exist
+mkdir -p "$PKG"/usr/bin
+mkdir -p "$PKG"/usr/etc/golded+
+mkdir -p "$PKG"/usr/etc/fidoip
+
+cd "$CWD" || exit
+rm -rf golded-plus
+git clone https://github.com/golded-plus/golded-plus.git
+git clone https://github.com/golded-plus/golded-plus.git
+cd golded-plus || exit
+cat dist-gpl.sh | sed "s|zip -9|#|" | sed "s|ln \\$|#|" > "$TMP"\dist-gpl.sh
+cp -v "$TMP"\dist-gpl.sh .
+chmod +x dist-gpl.sh
+
+if [ "$SYSOS" = "Linux" ]; then
+./dist-gpl.sh
+./dist-gpl.sh
+else
+gsed -i "s|make|gmake|g" dist-gpl.sh
+bash ./dist-gpl.sh
+bash ./dist-gpl.sh
+fi
+
+
+if [ -e "$CWD"/decode.txt ]; then
+  cat "$CWD"/decode.txt | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > "$PKG"/usr/etc/golded+/golded.cfg
+  cat "$PKG"/usr/etc/golded+/golded.cfg > "$PKG"/usr/etc/fidoip/decode.txt.template
+fi
+
+if [ -e "$CWD"/goldhelp.cfg ]; then
+  cat "$CWD"/goldhelp.cfg > "$PKG"/usr/etc/golded+/goldhelp.cfg
+fi
+
+if [ -e "$CWD"/goldkeys.cfg ]; then
+  cat "$CWD"/goldkeys.cfg > "$PKG"/usr/etc/golded+/goldkeys.cfg
+fi
+
+if [ -e "$CWD"/goldlang.cfg ]; then
+  cat "$CWD"/goldlang.cfg > "$PKG"/usr/etc/golded+/goldlang.cfg
+fi
+
+if [ -e "$CWD"/gedcolor.cfg ]; then
+  cat "$CWD"/gedcolor.cfg > "$PKG"/usr/etc/golded+/gedcolor.cfg
+fi
+
+if [ -e "$CWD"/golded.tpl ]; then
+  cat "$CWD"/golded.tpl > "$PKG"/usr/etc/golded+/golded.tpl
+fi
+
+# Add log for golded+:
+
+  mkdir -p "$PKG"/fido
+  cat "$CWD"/golded.log > "$PKG"/fido/golded.log
+
+if [ -e "$CWD"/ge ]; then
+  cat "$CWD"/ge | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > "$PKG"/usr/bin/ge
+  chmod +x  "$PKG"/usr/bin/ge
+fi
+
+if [ -e "$CWD"/g ]; then
+   cat "$CWD"/g | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > "$PKG"/usr/bin/g
+   chmod +x  "$PKG"/usr/bin/g
+fi
+
+if [ -e "$CWD"/gl ]; then
+     cat "$CWD"/gl | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > "$PKG"/usr/bin/gl
+     chmod +x  "$PKG"/usr/bin/gl
+fi
+
+mkdir -p "$PKG"/usr/etc/golded+ 
+cp -a cfgs "$PKG"/usr/etc/golded+/
+rm -f bin/screen*
+rm -f bin/requir*
+mv bin/openbsd* "$PKG"/usr/etc/golded+/
+mv bin/golded "$PKG"/usr/etc/golded+/
+rm -f bin/File_ID*
+cp -a bin/* "$PKG"/usr/bin/
+cp -a chsgen/* "$PKG"/usr/etc/golded+/
+cp "$CWD"/golded.cfm "$PKG"/usr/etc/golded+/
+mkdir -p "$PKG"/fido
+mkdir -p "$PKG"/fido/nodelist
+cp "$CWD"/nodelist.txt "$PKG"/fido/nodelist/
+cp "$CWD"/goldnode.* "$PKG"/fido/nodelist/
+cat "$CWD"/nodelist.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > "$PKG"/usr/bin/nodelist.sh
+chmod +x "$PKG"/usr/bin/nodelist.sh
+cp "$CWD"/*.eng "$PKG"/usr/etc/fidoip/
+cat "$CWD"/golded.tpl > "$PKG"/usr/etc/fidoip/golded.tpl
+cat "$CWD"/.screenrc  | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > "$PKG"/usr/etc/golded+/.screenrc
+
+# Correct general permissions/ownership:
+
+cd $PKG || exit
+chown -R "$IDN":"$IDG" .
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+
+# Build the package:
+
+tar -czf "$CWD"/$PNAME-$VERSION-"$ARCH"-"$SYSOS"-"$BUILD".tgz .
+cd $CWD || exit
+mv -v $PNAME-$VERSION-"$ARCH"-"$SYSOS"-"$BUILD".tgz ../packages/
+
+# Clean up the extra stuff:
+
+if [ -e "$TMP" ]; then
+	rm -rf "$TMP"
+fi
+

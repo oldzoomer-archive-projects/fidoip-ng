@@ -1,0 +1,21 @@
+#!/bin/sh
+echo "Scanning for inbound messages and files"
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config scan ;  sync
+echo "Packing FIDO messages and files"
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config pack ;  sync
+echo "Exchanging FIDO messages and files with links"
+INSTALLDIR/usr/bin/poll
+echo "Tossing received messages"
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config toss ;  sync
+echo "Tossing received files"
+INSTALLDIR/usr/bin/htick -c INSTALLDIR/usr/etc/fido/config toss ; sync
+echo "Annoncing received files"
+INSTALLDIR/usr/bin/htick -c INSTALLDIR/usr/etc/fido/config announce ; sync
+echo "Linking received messages into echo areas"
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config link  ; sync
+echo "AreaFix changing requests processing"
+INSTALLDIR/usr/bin/hpt -c INSTALLDIR/usr/etc/fido/config afix  ; sync
+echo "FileFix changing requests processing"
+INSTALLDIR/usr/bin/htick -c INSTALLDIR/usr/etc/fido/config ffix  ; sync
+echo "New fecho files tossing"
+INSTALLDIR/usr/bin/htick -c INSTALLDIR/usr/etc/fido/config toss  ; sync

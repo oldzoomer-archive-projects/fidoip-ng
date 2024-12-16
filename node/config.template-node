@@ -1,0 +1,190 @@
+# main fidoconfig file INSTALLDIR/usr/etc/fido/config
+#
+name SYSTEM-OPERATOR-NAME
+sysop SYSTEM-OPERATOR-NAME
+location LOCATION-TOWN
+address MYNODE-ADDRESS
+#список  r/o - активных readOnly линкуов и поинтов 
+include	INSTALLDIR/usr/etc/fido/readonly.lst 
+# каталоги
+# входящий для непарольных сессий
+inbound INSTALLDIR/fido/inbound
+# аналогично - для парольных сессий
+# локальные входящие файлы
+protinbound INSTALLDIR/fido/protinb
+LocalInbound   INSTALLDIR/fido/localinb
+# исходящие файлы
+outbound INSTALLDIR/fido/outbound
+# временные каталоги для тоссинга и паковки
+tempinbound INSTALLDIR/fido/tempinb
+tempoutbound INSTALLDIR/fido/tempoutb
+# лог; если что-то не работает - читать здесь
+logfiledir INSTALLDIR/fido/
+# дупобаза
+dupehistorydir INSTALLDIR/fido/msgbasedir
+# нодлист искать здесь
+nodelistdir INSTALLDIR/fido/nodelist
+# база сообщений
+msgbasedir  INSTALLDIR/fido/msgbasedir
+# Общедоступные файлы
+public		INSTALLDIR/fido/public
+# каталог файловых эх 
+FileAreaBaseDir INSTALLDIR/fido/filebox
+# каталог промежуточных файловых эх  
+PassFileAreaDir INSTALLDIR/fido/filebox
+# результаты работы тоссера, могут использоваться другими программами
+echotosslog INSTALLDIR/fido/echotoss.log
+importlog INSTALLDIR/fido/import.log
+# строить цепочки ответов только для новых сообщений
+linkwithimportlog kill
+# отдельные каталоги для линков
+separatebundles yes
+# не светить версии ПО
+disablepid yes
+disabletid yes
+# Perl-обработчики; подробное описание - в файле perlhooks
+#hptperlfile INSTALLDIR/fido/hptfunctions.pl
+# настройки архиваторов; дополнительные примеры - в файле packers
+pack zip zip -9 -j -q $a $f
+unpack "unzip -j -Loqq $a $f -d $p" 0 504b0304
+
+createFwdNonPass
+MinDiskFreeSpace 50
+
+# сюда будут складываться сообщения нам в конференциях
+CarbonTo SYSTEM-OPERATOR-NAME
+CarbonCopy carbonArea
+
+# сообщения для роботов будут приниматься и отправляться здесь
+robotsarea NETMAIL
+
+# настройки, общие для всех роботов
+robot default
+# удалять сообщения с запросами
+killrequests yes
+# атрибуты для сообщений с ответами
+reportsattr loc pvt k/s npd
+
+# настройки только для этого робота
+robot areafix
+fromname Areafix robot
+robotorigin Areafix robot
+
+# настройки только для этого робота
+robot filefix
+fromname FileFix robot
+robotorigin FileFix robot
+FileFixKillRequests
+
+# настройки, общие для всех линков; остальное - в файле links
+linkdefaults begin
+# если пакет получен по защищенной сессии - в нем может не быть пароля
+allowemptypktpwd secure
+# архиватор по умолчанию; для отдельных линков можно указывать другой
+packer zip
+# автоматическое создание конференций;
+# рекомендуется оставить здесь off, а для отдельных линков включать явно
+areafixautocreate on
+# параметры автосоздания
+areafixautocreatedefaults -b squish -dupecheck del -dupehistory 14
+# файл с описаниями конференций
+# areafixAutoCreateFile INSTALLDIR/usr/etc/fido/areas.lst
+# файл с описаниями файловых конференций
+# filefixAutoCreateFile  INSTALLDIR/usr/etc/fido/fareas.lst
+# по умолчанию отправляем пакеты сами, не дожидаясь входящих соединений
+echomailflavour direct
+# запретить пересылку запросов к роботам
+forwardrequests off
+linkdefaults end
+
+# описание линков
+# не редактируйте этот файл руками
+# для внесения изменений используйте команды addlink и removelink
+include INSTALLDIR/usr/etc/fido/link.lst
+
+# описание поинтов кроме .1 в INSTALLDIR/usr/etc/fido/point.lst
+# не редактируйте этот файл руками
+# для внесения изменений используйте команды addpoint и removepoint
+include INSTALLDIR/usr/etc/fido/point.lst
+
+# маршрутизации нетмейла для аплинка
+include INSTALLDIR/usr/etc/fido/route-default.lst
+# и маршрутизации нетмейла прочих узлов
+# не редактируйте этот файл руками
+# для внесения изменений используйте команды addlink и removelink
+include INSTALLDIR/usr/etc/fido/routing.lst
+
+FileFixKillRequests
+FileFixReportsAttr      loc pvt k/s  # kill filefix reports
+
+if "[module]"=="htick"
+
+FileFixFromName		FileFix
+OriginInAnnounce
+ConvertLongNames		DontTouch
+FileDescName 		file_id.diz
+FileAreaCreatePerms		0755
+FileDescPos		13
+
+AnnounceSpool		INSTALLDIR/fido/announce
+
+AnnAreaTag		Netmail
+AnnInclude		*
+AnnExclude		NOT.*
+AnnTo			SYSTEM-OPERATOR-NAME
+AnnFrom		HTick thoghtless 
+AnnSubj		New files!
+AnnAddrFrom	MYNODE-ADDRESS
+AnnOrigin		Thoghtless htick
+AnnAddrTo		MYNODE-ADDRESS
+
+endif
+
+# описания конференций
+# основная нетмейловая конференция - должна присутствовать обязательно
+netmailarea NETMAIL        INSTALLDIR/fido/netmail       -b squish
+# сюда падают сообщения, которые тоссер не сумел обработать
+badarea     BAD           INSTALLDIR/fido/badarea           -b squish
+# сюда падают дупы при использовании dupecheck move
+dupearea    DUPE          INSTALLDIR/fido/dupearea          -b squish
+dupebasetype    HashDupes
+# сюда откладываются копии сообщений, адресованных нам
+LocalArea carbonArea INSTALLDIR/fido/carbonarea -b Squish
+
+# эхоконференции и
+# файловые эхоконференции
+
+EchoArea SHORTNODE-NAME.robots INSTALLDIR/fido/msgbasedir/SHORTNODE-NAME.robots -b squish -dupecheck del -dupehistory 14 MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea SHORTNODE-NAME.official INSTALLDIR/fido/msgbasedir/SHORTNODE-NAME.official -b squish -dupecheck del -dupehistory 14 MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea SHORTNODE-NAME.test INSTALLDIR/fido/msgbasedir/SHORTNODE-NAME.test -b squish -dupecheck del -dupehistory 14 MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea SHORTNODE-NAME.forwards INSTALLDIR/fido/msgbasedir/SHORTNODE-NAME.forwards -b squish -dupecheck del -dupehistory 14 MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea SHORTNODE-NAME.local INSTALLDIR/fido/msgbasedir/SHORTNODE-NAME.local -b squish -dupecheck del -dupehistory 14 MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea SHORTNODE-NAME.fileecho INSTALLDIR/fido/msgbasedir/SHORTNODE-NAME.fileecho -b squish -dupecheck del -dupehistory 14 MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea su.ip.sysop INSTALLDIR/fido/msgbasedir/su.ip.sysop -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea r50.sysop INSTALLDIR/fido/msgbasedir/r50.sysop -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea r50.sysop.info INSTALLDIR/fido/msgbasedir/r50.sysop.info -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea r50.sysop.talk INSTALLDIR/fido/msgbasedir/r50.sysop.talk -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea r50.bone INSTALLDIR/fido/msgbasedir/r50.bone -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea r50.hubs INSTALLDIR/fido/msgbasedir/r50.hubs -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea ru.sysop INSTALLDIR/fido/msgbasedir/ru.sysop -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea su.sysop INSTALLDIR/fido/msgbasedir/su.sysop -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+EchoArea su.ip.point INSTALLDIR/fido/msgbasedir/su.ip.point -b squish -dupecheck del -dupehistory 14 FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1 
+
+FileArea SHORTNODE-NAME.files INSTALLDIR/fido/filebox/SHORTNODE-NAME.files -a MYNODE-ADDRESS -d "Local File Area" FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS MYNODE-ADDRESS.1  
+FileArea book INSTALLDIR/fido/filebox/book -a MYNODE-ADDRESS FIRSTLINK-NODE-ADDRESS 
+FileArea book-dop INSTALLDIR/fido/filebox/book-dop -a MYNODE-ADDRESS FIRSTLINK-NODE-ADDRESS 
+FileArea r50-list INSTALLDIR/fido/filebox/r50-list -a MYNODE-ADDRESS -d "Russian Nodelist" FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS.1 
+FileArea fidonews INSTALLDIR/fido/filebox/fidonews -a MYNODE-ADDRESS -d "Journal of Fidonews" FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS.1 
+FileArea xofcfelst INSTALLDIR/fido/filebox/xofcfelst -a MYNODE-ADDRESS -d "Fileecho list" FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS.1 
+FileArea xofcelist INSTALLDIR/fido/filebox/xofcelist -a MYNODE-ADDRESS -d "Region 50 Bone Information." FIRSTLINK-NODE-ADDRESS MYNODE-ADDRESS.1 
+
+#LogEchoToScreen
+
+
+# User's settings
+
+# User's areas generated by hpt
+
+
+
+

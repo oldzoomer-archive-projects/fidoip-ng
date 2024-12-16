@@ -1,0 +1,143 @@
+#!/bin/bash
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+# Removes link from INSTALLDIR/usr/etc/binkd.cfg, INSTALLDIR/usr/etc/golded+/macro.cfg
+# INSTALLDIR/usr/etc/fido/link.lst readonly.lst and routing.lst 
+
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
+SEDT="sed"  # Sed program type
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+# Declaration of allowed symbol for user input scrubbing
+declare -r AllowedNumber="1234567890"
+
+ZONE=`grep "domain fidonet"  INSTALLDIR/usr/etc/binkd.cfg | head -n1 | $SEDT "s| ||g" | $SEDT "s|.*outbound||g"`
+
+echo  "#=================================================="
+echo "# This script remove link in fidoip's FIDONet node configuration."
+echo  "#=================================================="
+echo
+
+MYNODE=`INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Aka " | $SEDT "s|Aka ||"g | grep "\.1 " |  $SEDT "s| ||g" | $SEDT "s|\.1||"g` 
+# Inserting \ before /
+MYNODE1=`echo $MYNODE | $SEDT "s|/|\\\\\/|g"`
+ARR0=("$MYNODE1""\.1 ")
+ARR1=("$MYNODE1"" ")
+INSTALLDIR/usr/bin/listlink | grep -v "#" | grep "Aka " | $SEDT "s|Aka ||"g  |  grep -v -e "${ARR0[*]}" |  grep -v -e "${ARR1[*]}" |  $SEDT "s| ||g"  >  $TMP/link.info.tmp
+
+NUMBER=`cat $TMP/link.info.tmp | wc -l`
+
+if [ $NUMBER = "0" ];then
+echo "No additional links added to INSTALLDIR/usr/etc/fido/link.lst yet"
+rm -rf "$TMP"
+exit
+else
+echo "WARNING!!! Before removing link you need to unsubscribe all echoes "
+echo "you have via this link now. If you do not send * to unsubcribe to AreaFix and "
+echo "FileFix for all echoes you have via link you whoud like to delete then"
+echo "PRESS now Ctrl-C!"
+echo "YOU ARE HAVE WARNED!"
+echo
+sleep 5
+echo "#==========================================================="
+echo "# Select what link to delete from configuration fidoip node"
+echo "#==========================================================="
+echo "# Link address:   "
+echo
+i=1
+NUMBER=$(($NUMBER+1))
+while [ "$i" -ne "$NUMBER" ]
+do
+echo " "$i" `$SEDT -n ""$i"p" $TMP/link.info.tmp`"
+i=$(($i+1))
+done
+echo "Enter number of link to choose variant from the list:"
+read -p " ?" answer
+# Checking user input&scrubbing
+ScrubbedCheck4="${answer//[^$AllowedNumber]/}"
+if [ "$answer" = "$ScrubbedCheck4" ]; then
+echo 
+else
+echo 
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$AllowedNumber""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+rm -rf $TMP
+exit
+fi
+
+echo
+if [ "$answer" -lt "$NUMBER" -a "$answer" -gt 0 ]; then
+echo  "=================================================="
+echo "You choosed:"
+echo " "$answer" `$SEDT -n ""$answer"p" $TMP/link.info.tmp`"
+$SEDT -n ""$answer"p" $TMP/link.info.tmp > $TMP/link.tmp
+LINKINFO=`cat $TMP/link.tmp`
+#LINKLAST=`echo $LINKINFO | $SEDT "s|.*\\:||g" | $SEDT "s| .*||g"`
+#LINKPREF=`echo $LINKINFO | $SEDT "s|[^0-9:/]*||g"  | $SEDT "s|:.*||g"`
+#LINKLAST1=`echo $LINKLAST | $SEDT 's|/|\\\/|g'`
+# Inserting \ before /
+LINKLAST1=`echo $LINKINFO | $SEDT "s|/|\\\\\/|g"`
+ARR2=(" ""$LINKLAST1")
+LINKNAME=`cat INSTALLDIR/usr/etc/fido/link.lst | grep -v "#" | grep -v "route" | grep -B 1 -e "Aka${ARR2[*]} " | grep "Link "  |   $SEDT "s|Link ||" `
+# Inserting \ before space
+LINKNAME1=`echo $LINKNAME | $SEDT "s| |\ |g"`
+ARR3=("\ "$LINKNAME1"\ ")
+echo  "=================================================="
+echo  "Removing "$LINKINFO" link $LINKNAME from configuration files"
+echo  "=================================================="
+
+cp INSTALLDIR/usr/etc/fidoip/node/announcerem1.template-node $TMP/announcerem1.template-node
+
+$SEDT -i -E "/${ARR3[*]}/,+10d" INSTALLDIR/usr/etc/fido/link.lst
+$SEDT -i -E "/${ARR2[*]}\,\ /d" INSTALLDIR/usr/etc/golded+/macro.cfg
+$SEDT -i -E "/${ARR2[*]}\ /d" INSTALLDIR/usr/etc/fido/routing.lst
+$SEDT -i -E "/${ARR2[*]}\ /d" INSTALLDIR/usr/etc/binkd.cfg 
+$SEDT -i -E "/${ARR2[*]}\ /d" INSTALLDIR/usr/bin/poll
+$SEDT -i -E "s|${ARR2[*]}\ |\ |g" INSTALLDIR/usr/etc/fido/config
+$SEDT -i -E "/${ARR2[*]}\ /d" INSTALLDIR/usr/etc/fido/readonly.lst
+$SEDT -i -E "/route\ crash${ARR2[*]}\ /d" INSTALLDIR/usr/etc/fido/route-default.lst
+
+echo
+echo  "#=================================================="
+echo "# Generating announce message..."
+echo  "#=================================================="
+echo
+
+NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
+SHORTNODENAME=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+
+$SEDT -i "s|LINK-ADDRESS|$LINKLAST1|g" $TMP/announcerem1.template-node
+export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Link "$LINKINFO" is removed " -e "$SHORTNODENAME".official -d INSTALLDIR/fido/localinb $TMP/announcerem1.template-node
+echo
+INSTALLDIR/usr/bin/toss
+echo
+echo  "#=================================================="
+echo "# Done."
+echo  "#=================================================="
+echo
+rm -rf $TMP
+fi
+rm -rf $TMP
+fi
+rm -rf $TMP

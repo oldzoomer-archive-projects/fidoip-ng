@@ -1,0 +1,140 @@
+#!/bin/bash
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+# Shows list reandOnly 
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
+SEDT="sed"  # Sed program type
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+echo  "#=================================================="
+echo "# Generationg list of active echoes..."
+echo "# Parsing of echo in INSTALLDIR/usr/etc/fido/config."
+echo  "#=================================================="
+echo
+
+INSTALLDIR/usr/bin/listecho | grep --binary-files=text -v "#" | $SEDT "s| -.*||g" | tr -d '\200-\377'  | $SEDT 's|".*||g' | $SEDT 's| -.*||g'  > $TMP/listecho.info.tmp
+
+NUMBER=`cat $TMP/listecho.info.tmp | wc -l`
+ECHOINFO=`cat $TMP/listecho.info.tmp`
+
+declare -r AllowedChars="1234567890.-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+declare -r AllowedNumber="1234567890"
+
+
+if [ $NUMBER = "0" ];then
+echo  "#=================================================="
+echo "# No echos in INSTALLDIR/usr/etc/fido/config."
+echo  "#=================================================="
+rm -rf $TMP
+exit
+fi
+
+echo  "#=================================================="
+echo "# Number of active echoes on node is $NUMBER"
+echo  "#=================================================="
+echo "# Now enter mask on echo name or full name of echo."
+echo "# Mask means mark of echo name. Sample:"
+echo "# su.book: will show all echoes begin with su.book, "
+echo "# or ru.linux - will show all echoes begin with"
+echo "# ru.linux - ru.linux.chainik, ru.linux and ru.linux.debian."
+echo "# Or press Enter to see all readOnly list"
+echo  "#=================================================="
+echo -n ":"
+read echoname
+if [ -z "$echoname" ]
+then
+echo  "#=================================================="
+echo '# Show readonly list of all echos:'
+echo "# in config file INSTALLDIR/usr/etc/fido/readonly.lst:"
+echo  "#=================================================="
+cat INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" |  $SEDT  '/ReadOnly/!d' | sort 
+echo  "#=================================================="
+rm -f $TMP/listecho.info.tmp
+exit
+fi
+
+# Checking user input&scrubbing
+ScrubbedCheck4="${echoname//[^$AllowedChars]/}"
+if [ "$echoname" = "$ScrubbedCheck4" ]; then
+echo  ''
+else
+echo ' '
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$AllowedChars""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+exit
+fi
+
+cat INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" | grep --binary-files=text "$echoname"  |  $SEDT  '/ReadOnly/!d' | sort  >  $TMP/echosel.info.tmp
+
+NUMBER1=`cat $TMP/echosel.info.tmp | wc -l`
+i=1
+NUMBER1=$(($NUMBER1+1))
+while [ "$i" -ne "$NUMBER1" ]
+do
+echo " "$i" `$SEDT -n ""$i"p" $TMP/echosel.info.tmp`"
+i=$(($i+1))
+done
+
+echo "Enter number to choose variant from the list:"
+read -p " ?" answer
+
+# Checking user input&scrubbing
+ScrubbedCheck5="${answer//[^$AllowedNumber]/}"
+if [ "$answer" = "$ScrubbedCheck5" ]; then
+echo  ''
+else
+echo ' '
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$AllowedNumber""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+exit
+fi
+
+echo
+if [ "$answer" -lt "$NUMBER1" -a "$answer" -gt 0 ]; then
+echo  "=================================================="
+echo "You choosed:"
+echo " "$answer" `$SEDT -n ""$answer"p" $TMP/echosel.info.tmp`"
+$SEDT -n ""$answer"p" $TMP/echosel.info.tmp > $TMP/echo.tmp
+ECHONAME=`cat $TMP/echo.tmp`
+echo  "#================================================="
+echo "# Here is ReadOnly info regarging echo "$ECHONAME" "
+echo "# in config file INSTALLDIR/usr/etc/fido/readonly.lst:"
+echo  "#=================================================="
+
+grep "$ECHONAME" INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" | sort  > $TMP/read.info.tmp
+NUM1=`cat $TMP/echosel.info.tmp | wc -l`
+
+if [ $NUM1 = "0" ];then
+echo  "#=================================================="
+echo "# No ReadOnly found for "$ECHONAME""
+echo  "#=================================================="
+else
+cat $TMP/read.info.tmp
+fi
+rm -rf $TMP
+fi
+rm -rf $TMP

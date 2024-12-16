@@ -1,0 +1,5 @@
+#---INSTALLDIR/usr/etc/fido/readonly.lst---
+# ReadOnly 
+# Sample for for point XXX on ru.linux.chainik
+#ReadOnly MYNODE-ADDRESS.XXX ru.linux.chainik
+

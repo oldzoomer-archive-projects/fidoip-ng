@@ -1,0 +1,25 @@
+# Link definitions
+
+# For local exchange inside system
+Link LoopBack 
+Aka MYNODE-ADDRESS 
+allowemptypktpwd on
+
+# 1-st point for you
+# You may use .1 point when accesing from other PC from network 
+Link SYSTEM-OPERATOR-NAME 
+Aka MYNODE-ADDRESS.1 
+ouraka MYNODE-ADDRESS 
+password MYPOINT-PASSWORD 
+
+# sample uplink definition
+Link FIRSTLINK-NODE-NAME 
+Aka FIRSTLINK-NODE-ADDRESS 
+ouraka MYNODE-ADDRESS 
+password FIRSTLINK-NODE-PASSWORD 
+areafixpwd FIRSTLINK-NODE-PASSWORD 
+filefixpwd FIRSTLINK-NODE-PASSWORD 
+areafixAutoCreate on 
+filefixAutoCreate on 
+route direct FIRSTLINK-NODE-ADDRESS FIRSTLINK-NODE-ADDRESS.* 
+

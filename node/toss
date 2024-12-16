@@ -1,0 +1,8 @@
+#!/bin/sh
+export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config
+echo "Tossing, scanning for inbound messages and AreaFix changing requests processing..."
+INSTALLDIR/usr/bin/hpt -q toss scan afix
+echo "FileFix processing..."
+INSTALLDIR/usr/bin/htick -q toss scan ffix 
+echo "Packing messages..."
+INSTALLDIR/usr/bin/hpt -q pack

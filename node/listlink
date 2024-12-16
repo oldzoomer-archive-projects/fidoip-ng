@@ -1,0 +1,51 @@
+#!/bin/bash
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+#  Shows list additional links in INSTALLDIR/usr/etc/fido/link.lst
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
+SEDT="sed"  # Sed program type
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+echo "#==================================================="
+echo "# This script list links of fidoip's FIDONet node."
+echo "#==================================================="
+echo
+
+echo "#==================================================="
+echo "# Here is links in configuration file"
+echo "# INSTALLDIR/usr/etc/fido/link.lst:"
+echo "#==================================================="
+cat INSTALLDIR/usr/etc/fido/link.lst | grep -v "#" | grep "Link " 
+echo "#==================================================="
+echo
+echo "#==================================================="
+echo "# Here is Aka of links in configuration file"
+echo "# INSTALLDIR/usr/etc/fido/link.lst:"
+echo "# ==================================================="
+cat INSTALLDIR/usr/etc/fido/link.lst | grep -v "#" | grep "Aka " 
+echo "# ==================================================="
+echo
+echo "#==================================================="
+echo "# Here is passwords of links in configuration file"
+echo "# INSTALLDIR/usr/etc/fido/link.lst:"
+echo "# ==================================================="
+cat INSTALLDIR/usr/etc/fido/link.lst | grep -v "#" | grep "password " 
+echo "# ==================================================="
+rm -rf $TMP
+

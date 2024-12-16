@@ -1,0 +1,2 @@
+#!/bin/sh
+screen -c INSTALLDIR/usr/etc/golded+/.screenrc

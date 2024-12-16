@@ -1,0 +1,3 @@
+# First and main link 
+node FIRSTLINK-NODE-ADDRESS FIRSTLINK-HOST-DOMAIN-NAME FIRSTLINK-NODE-PASSWORD c INSTALLDIR/fido/2uplink    #### 1-st and Main UPLINK connection Do not edit this comment 
+

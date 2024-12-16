@@ -1,0 +1,36 @@
+#!/bin/sh
+#   This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+OPTS=" -DCq INSTALLDIR/usr/etc/binkd.cfg"
+DAEMON="INSTALLDIR/usr/sbin/binkd"
+
+case "$1" in
+  start)
+
+    echo -n "Starting FTN mailer: binkd"
+    $DAEMON $OPTS
+    echo "."
+
+    ;;
+  stop)
+    echo -n "Stopping FTN mailer: binkd"
+    killall -9 binkd
+    echo "."
+    ;;
+  reload)
+    echo -n "Reloading FTN mailer: binkd"
+    killall -1 binkd 
+    echo "."
+    ;;
+  restart|force-reload)
+    sh $0 stop
+    sleep 1
+    sh $0 start
+    ;;
+  *)
+    echo "Usage: INSTALLDIR/usr/sbin/binkd {start|stop|restart|reload|force-reload}"
+    exit 1
+    ;;
+esac
+
+exit 0

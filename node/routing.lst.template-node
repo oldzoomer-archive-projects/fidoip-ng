@@ -1,0 +1,3 @@
+ 
+route direct LINK-NODE-ADDRESS LINK-NODE-ADDRESS.*  
+routefile direct LINK-NODE-ADDRESS LINK-NODE-ADDRESS.*  

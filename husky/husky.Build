@@ -1,0 +1,174 @@
+#!/bin/sh
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+########################
+# NOTES:
+#
+########################
+# Husky Fido Project https://github.com/huskyproject
+# For downloading latest verisons required git.
+########################
+
+# Set initial variables:
+
+NAME=husky			# Program name
+PNAME=husky			# Package name (Useful for changing case, removing "-"s, etc.)
+VERSION=1.9		# Program version
+PVERSION=		# Package version (Useful for removing "-"s, CVS builds, etc.)
+ARCH=$(uname -m)	# Package architecture
+SYSOS=$(uname -s) # Package architecture
+OSTYPE=$(uname -o 2>/dev/null || uname -p) 
+BUILD=${BUILD:-fido_my1}	# Build number plus packager initials (use your own)
+
+CWD=$(pwd)
+HOMEDIR=$(cd ../../; pwd)
+TMP=$(mktemp -d)	# Location to compile the source
+PKG=$TMP/package-$NAME	# Location to build the package (use "package-$NAME" to avoid poss. conflicts)
+IDN=$( id -un)
+IDG=$(id -gn)
+
+mkdir -p "$PKG"/usr/bin	# Make sure $PKG and $TMP (-p switch) exist
+mkdir -p "$PKG"/fido
+mkdir -p "$PKG"/usr/etc/fidoip
+
+
+cd "$CWD" || exit
+rm -rf husky
+mkdir -p husky
+sh init_build -d "$CWD"/husky
+sh init_build -d "$CWD"/husky
+sh init_build -d "$CWD"/husky
+cat huskymak.cfg | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|" > husky/huskymak.cfg
+cp build.sh husky/build.sh
+cd husky/ || exit
+sh build.sh
+
+# Clang "./configure && make && make install"
+
+cd huskylib || exit
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../smapi || exit
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../fidoconf || exit
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../areafix || exit
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../hpt || exit
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../htick || exit
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../hptsqfix || exit
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../hptkill || exit
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd ../nltools || exit 
+cat ../../includirs.txt | sed "s|INCLUDE_HUSKYLIB|$PKG|" >> CMakeLists.txt
+cmake . -DCMAKE_INSTALL_PREFIX:PATH="$PKG"/usr -H. -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_COMPILER=clang
+cmake --build build
+cmake --build build --target install
+cd $CWD || exit
+
+# Configuration directories & files 
+   
+mkdir -p "$PKG"/usr/etc/fido
+cp "$CWD"/husky/huskymak.cfg "$PKG"/usr/etc/fido 
+
+if [ -e "$CWD"/config ]; then
+  mkdir -p "$PKG"/usr/etc/fidoip
+  cat "$CWD"/config | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > "$PKG"/usr/etc/fido/config
+  cat "$PKG"/usr/etc/fido/config > "$PKG"/usr/etc/fidoip/config.template
+fi
+
+if [ -e "$CWD"/hpt_area.pl ]; then
+  cat "$CWD"/hpt_area.pl  | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > "$PKG"/usr/bin/hpt_area.pl
+  chmod +x "$PKG"/usr/bin/hpt_area.pl
+  cat "$CWD"/hpt_log.pl | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > "$PKG"/usr/bin/hpt_log.pl
+  chmod +x "$PKG"/usr/bin/hpt_log.pl
+  cat "$CWD"/st_htick.pl | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|" > "$PKG"/usr/bin/st_htick.pl
+  chmod +x "$PKG"/usr/bin/st_htick.pl
+  cat "$CWD"/hpt_info.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|"| sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > "$PKG"/usr/bin/hpt_info.sh
+  chmod +x "$PKG"/usr/bin/hpt_info.sh
+  cat "$CWD"/linkarea_stat.sh  | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g"| sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > "$PKG"/usr/bin/linkarea_stat.sh
+  chmod +x "$PKG"/usr/bin/linkarea_stat.sh
+  cat "$CWD"/import_arealist_from_windows.sh  | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > "$PKG"/usr/bin/import_arealist_from_windows.sh
+  chmod +x "$PKG"/usr/bin/import_arealist_from_windows.sh
+  cat "$CWD"/export_arealist_to_windows.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|" | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|" > "$PKG"/usr/bin/export_arealist_to_windows.sh
+  chmod +x "$PKG"/usr/bin/export_arealist_to_windows.sh
+  cat "$CWD"/save_arealist.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|" | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|" > "$PKG"/usr/bin/save_arealist.sh
+  chmod +x "$PKG"/usr/bin/save_arealist.sh
+fi
+
+# Add logs for hpt:
+
+if [ -e "$CWD"/echotoss.log ]; then
+  cat "$CWD"/echotoss.log > "$PKG"/fido/echotoss.log
+fi
+
+if [ -e "$CWD"/import.log ]; then
+   cat "$CWD"/import.log > "$PKG"/fido/import.log
+fi
+
+if [ -e "$CWD"/htick.log ]; then
+   cat "$CWD"/htick.log > "$PKG"/fido/htick.log
+fi
+
+if [ -e "$CWD"/sqpack.log ]; then
+   cat "$CWD"/sqpack.log > "$PKG"/fido/sqpack.log
+fi
+
+if [ -e "$CWD"/hpt.log ]; then
+   cat "$CWD"/hpt.log > "$PKG"/fido/hpt.log
+fi
+
+# Correct general permissions/ownership:
+
+cd $PKG || exit
+chown -R "$IDN":"$IDG" .
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+
+# Build the package:
+
+tar -czf "$CWD"/$PNAME-$VERSION-"$ARCH"-"$SYSOS"-"$BUILD".tgz .
+cd $CWD || exit
+mv -v $PNAME-$VERSION-"$ARCH"-"$SYSOS"-"$BUILD".tgz ../packages/
+
+# Clean up the extra stuff:
+
+if [ -e "$TMP" ]; then
+	rm -rf "$TMP"
+fi
+
+

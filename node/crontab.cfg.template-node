@@ -1,0 +1,35 @@
+# fidoip NMS(Node Management System) crontab tasks
+# crontab for user you setup fido and binkd service started
+# 
+# 
+### For automatic install use crontask.sh under user who run binkd (fido, ftn or any other except root)  
+###
+### For manual install dump the content of the existing crontab to a file
+### `crontab -l > crontab.tmp`
+### `cat node/crontasks.template-node | grep -v "###" >> crontab.tmp`
+### import the new crontab
+### `crontab crontab.tmp`
+### rm -f crontab.tmp
+
+# format
+# min  hour   day   month      day_of_week command
+
+# This script runs every month(at 1-st day 00:05),
+# generate montly statistics, post it to local area .robots
+# and clean up old outbound files
+
+5 0 1 * * INSTALLDIR/usr/bin/fido.monthly >/dev/null 2>&1
+
+# This script runs every day(at 23:57), generate dayly statistics,
+# and post it to local area .robots 
+
+57 23 * * * INSTALLDIR/usr/bin/fido.dayly >/dev/null 2>&1
+
+# This script runs every 22 minutes and poll your links to exchange messages
+
+*/22 * * * * INSTALLDIR/usr/bin/rs >/dev/null 2>&1
+
+# This script runs every 7 minutes and toss messages of your points
+
+*/7 * * * * INSTALLDIR/usr/bin/toss >/dev/null 2>&1
+

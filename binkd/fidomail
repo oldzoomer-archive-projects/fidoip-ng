@@ -1,0 +1,39 @@
+#!/bin/sh
+#   This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+# Notificator for *nix desktops
+# If you whould like to see notfication messages place this script to crontab
+# If for example you whould like to start this script every 50 minutes copy this script to
+# INSTALLDIR/usr/bin
+# sudo cp fidomail INSTALLDIR/usr/bin
+# and add to crontab this string:
+# */50 * * * * INSTALLDIR/usr/bin/fidomail >/dev/null 2>&1  
+# Script created by Vladimir Smagin - 2:5020/8080.21
+#
+USERNAME=`whoami` ; T1="root"
+TMP1=`mktemp`
+TMP2=`mktemp`
+if [ "$T1" = "$USERNAME" ]; then 
+echo  'Please do not run this script as root' ; exit
+fi
+
+INSTALLDIR/usr/bin/recv 2> $TMP1
+bla=`cat $TMP1 |grep 'receiving'`
+if [ -z "$bla" ]
+then
+sleep 1
+else
+DISPLAY=:0 notify-send "You've got new FIDO-messages!" "Start Golded for reading"
+fi
+
+INSTALLDIR/usr/bin/send 2> $TMP2
+bla2=`cat $TMP2 | grep 'sending'`
+if [ -z "$bla2" ]
+then
+sleep 1
+else
+DISPLAY=:0 notify-send "You've sent your FIDO-messages!" "Your messages have been sent"
+fi
+
+rm -rf $TMP1
+rm -rf $TMP2

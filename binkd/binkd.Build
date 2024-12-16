@@ -1,0 +1,210 @@
+#!/bin/sh
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+########################
+# NOTES: 
+########################
+# Binkd Fido Mailer
+# Download latest verison of and remame in bottom in unzip
+# You could do it automatically if uncomment line with git command.  
+#
+########################
+ 
+# Set initial variables:
+
+NAME=binkd			# Program name
+PNAME=binkd			# Package name (Useful for changing case, removing "-"s, etc.)
+VERSION=1.1a-115		# Program version
+PVERSION=		# Package version (Useful for removing "-"s, CVS builds, etc.)
+ARCH=$(uname -m)	# Package architecture
+SYSOS=$(uname -s) # Package architecture
+OSTYPE=$(uname -o 2>/dev/null || uname -p) 
+BUILD=${BUILD:-fido_my1}	# Build number plus packager initials (use your own)
+
+CWD=$(pwd)
+HOMEDIR=$(cd ../../; pwd)
+TMP=$(mktemp -d)	# Location to compile the source
+PKG=$TMP/package-$NAME	# Location to build the package (use "package-$NAME" to avoid poss. conflicts)
+IDN=$( id -un)
+IDG=$(id -gn)
+
+# Compiler flags based on intended architecture:
+# Can easily expand this for alternate compilations
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+fi
+
+mkdir -p $PKG		# Make sure $PKG and $TMP (-p switch) exist
+
+cd "$CWD" || exit
+rm -rf binkd
+git clone https://github.com/pgul/binkd
+git clone https://github.com/pgul/binkd 
+cp binkd/mkfls/unix/* binkd/
+chmod +x binkd/mkinstalldirs
+cd binkd || exit
+
+# Correct general permissions/ownership:
+
+chown -R $IDN:$IDG .
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+
+# Classic "./configure && make && make install":
+
+
+if [ "$OSTYPE" = "Cygwin" ]; then
+CFLAGS="$SLKCFLAGS" \
+sh configure \
+  --prefix="$HOMEDIR"/usr/ \
+  --sysconfdir="$HOMEDIR"/usr/etc \
+  --localstatedir="$HOMEDIR"/usr/lib \
+  --with-proxy --with-bwlim \
+  $ARCH
+else
+CFLAGS="$SLKCFLAGS" \
+sh configure \
+  --prefix="$HOMEDIR"/usr/ \
+  --sysconfdir="$HOMEDIR"/usr/etc \
+  --localstatedir="$HOMEDIR"/usr/lib \
+  --with-proxy --with-bwlim --with-perl \
+  $ARCH
+fi
+make
+
+mkdir -p $PKG/usr/sbin
+mkdir -p $PKG/usr/bin
+mkdir -p $PKG/usr/etc/fidoip
+mkdir -p $PKG/fido
+
+cp binkd $PKG/usr/sbin/
+cp binkd.conf $PKG/usr/etc/binkd.conf-dist
+
+# Correct binaries ownership:
+
+if ls $PKG/usr/sbin &> /dev/null; then
+  chown -R $IDN:$IDG $PKG/usr/sbin
+fi
+
+if [ -e $CWD/binkd.cfg ]; then
+
+cat $CWD/binkd.cfg | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|g" > $PKG/usr/etc/binkd.cfg
+cat $PKG/usr/etc/binkd.cfg > $PKG/usr/etc/fidoip/binkd.cfg.template
+
+if [ "$OSTYPE" = "Android" ]; then
+ sed -i "s|/var/run/|/data/data/com.termux/files/usr/var/run/|" $PKG/usr/etc/binkd.cfg
+ sed -i "s|/var/run/|/data/data/com.termux/files/usr/var/run/|" $PKG/usr/etc/fidoip/binkd.cfg.template
+else
+ sed -i "s|/var/run/|$HOMEDIR/fido/|" $PKG/usr/etc/binkd.cfg
+ sed -i "s|/var/run/|$HOMEDIR/fido/|" $PKG/usr/etc/fidoip/binkd.cfg.template
+fi
+
+fi
+
+if [ -e $CWD/recv ]; then
+cat $CWD/recv | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > $PKG/usr/bin/recv
+cat $PKG/usr/bin/recv > $PKG/usr/etc/fidoip/recv.template
+chmod +x $PKG/usr/bin/recv
+chmod +x $PKG/usr/etc/fidoip/recv.template
+fi
+
+if [ -e $CWD/send ]; then
+cat $CWD/send | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > $PKG/usr/bin/send
+cat $PKG/usr/bin/send > $PKG/usr/etc/fidoip/send.template
+chmod +x $PKG/usr/bin/send
+chmod +x $PKG/usr/etc/fidoip/send.template
+fi
+
+if [ -e $CWD/binkdsrv ]; then
+cat $CWD/binkdsrv | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > $PKG/usr/bin/binkdsrv
+chmod +x $PKG/usr/bin/binkdsrv
+fi
+
+if [ -e $CWD/fidomail ]; then
+cat $CWD/fidomail | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > $PKG/usr/bin/fidomail
+chmod +x $PKG/usr/bin/fidomail
+fi
+
+if [ -e $CWD/binkdstat.pl ]; then
+  cat $CWD/binkdstat.pl | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|" > $PKG/usr/bin/binkdstat.pl
+  chmod +x $PKG/usr/bin/binkdstat.pl
+  cat $CWD/stat-binkd.pl | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|" > $PKG/usr/bin/stat-binkd.pl
+  chmod +x $PKG/usr/bin/stat-binkd.pl
+  cat $CWD/binkd_yesterday_stat.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|" | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|"  > $PKG/usr/bin/binkd_yesterday_stat.sh
+  chmod +x $PKG/usr/bin/binkd_yesterday_stat.sh
+  cat $CWD/binkd_weekly_stat.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|" | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|" > $PKG/usr/bin/binkd_weekly_stat.sh
+  chmod +x $PKG/usr/bin/binkd_weekly_stat.sh
+  cat $CWD/binkd_monthly_stat.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|" | sed "s|INSTALLDIR/fido|$HOMEDIR/fido|" > $PKG/usr/bin/binkd_monthly_stat.sh
+  chmod +x $PKG/usr/bin/binkd_monthly_stat.sh
+fi
+
+if [ -e $CWD/binkd.log ]; then
+  mkdir -p $PKG/fido
+  mkdir -p $PKG/fido/outbound
+  mkdir -p $PKG/fido/protinb
+  mkdir -p $PKG/fido/inbound
+  mkdir -p $PKG/fido/tempinb
+  mkdir -p $PKG/fido/tempoutb
+  mkdir -p $PKG/fido/filebox
+  mkdir -p $PKG/fido/badarea 
+  mkdir -p $PKG/fido/carbonarea
+  mkdir -p $PKG/fido/msgbasedir
+  mkdir -p $PKG/fido/netmailarea
+  mkdir -p $PKG/fido/localinb
+  mkdir -p $PKG/fido/uudecode
+  mkdir -p $PKG/fido/outfile
+  mkdir -p $PKG/fido/nodelist
+  mkdir -p $PKG/fido/2uplink
+  mkdir -p $PKG/fido/public
+  mkdir -p $PKG/fido/flags
+  mkdir -p $PKG/fido/magic
+  mkdir -p $PKG/fido/announce
+ cat $CWD/binkd.log > $PKG/fido/binkd.log
+fi
+
+# Correct general permissions/ownership:
+
+cd $PKG
+chown -R $IDN:$IDG .
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+
+# Build the package:
+
+tar -czf $CWD/$PNAME-$VERSION-$ARCH-$SYSOS-$BUILD.tgz .
+cd $CWD || exit
+mv -v $PNAME-$VERSION-$ARCH-$SYSOS-$BUILD.tgz ../packages/
+
+# Clean up the extra stuff:
+
+if [ -e "$TMP" ]; then
+	rm -rf "$TMP"
+fi
+

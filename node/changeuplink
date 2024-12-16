@@ -1,0 +1,291 @@
+#!/bin/bash
+# fidoip node change mail uplink
+# If you need to change main uplink make sure that you unsubscribe before from all echoes you got throught this link
+CWD=`pwd`
+OSNAME=`uname`
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
+SEDT="sed"  # Sed program type
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+echo  "=================================================="
+echo "Not supported in this release. Use removelink and addlink "
+echo "instead or edit configuration files manually..."
+echo  "=================================================="
+rm -rf "$TMP"
+exit
+
+set -e
+set -u
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+# Declaration of allowed symbol for user input scrubbing
+declare -r AllowedChars="1234567890/., :-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+declare -r AllowedNumbers="1234567890/.:"
+declare -r Alloweddns="1234567890/.:-abcdefghijklmnopqrstuvwxyz"
+
+echo "--------------------------------------------------------------------"
+echo ""
+echo "This script change main uplink of your for FIDONet node!"
+echo "Make sure that you unsubscribe before from all echoes you got"
+echo "throught previous uplink"
+echo "--------------------------------------------------------------------"
+echo ""
+
+echo -e "Enter your NEW main UPLINK full name and press press [ENTER]."
+echo -n "Sample -  Ivan Papuasov: "
+read uplinkname
+if [ -z "$uplinkname" ]
+then
+echo 'You input nothing.'
+echo 'Please run this script again and input something.'
+exit
+fi
+
+# Checking user input&scrubbing
+ScrubbedCheck4="${uplinkname//[^$AllowedChars]/}"
+if [ "$uplinkname" = "$ScrubbedCheck4" ]; then
+echo  ''
+else
+echo ' '
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$AllowedChars""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+exit
+fi
+
+# Inserting \ before space
+echo  "$uplinkname" | $SEDT 's/ /\\ /g' > $TMP/fidoiptmp
+uplinkname1=`cat $TMP/fidoiptmp`
+
+# Changing all space to _ 
+echo  "$uplinkname" | $SEDT 's/ /\_/g' > $TMP/fidoiptmp
+uplinkname2=`cat $TMP/fidoiptmp`
+
+echo -e "Enter your NEW UPLINK FTN address and press [ENTER]."
+echo -n "Sample -  2:5020/777: "
+read uplinkftnaddress
+if [ -z "$uplinkftnaddress" ]
+then
+echo 'You input nothing.'
+echo 'Please run this script again and input something.'
+exit
+fi
+
+# Checking user input&scrubbing
+ScrubbedCheck5="${uplinkftnaddress//[^$AllowedNumbers]/}"
+if [ "$uplinkftnaddress" = "$ScrubbedCheck5" ]; then
+echo  ''
+else
+echo ' '
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$AllowedNumbers""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+exit
+fi
+
+# Inserting \ before space
+echo  "$uplinkftnaddress" | $SEDT 's|/|\\/|g' > $TMP/fidoiptmp
+uplinkftnaddress1=`cat $TMP/fidoiptmp`
+
+echo "Enter NEW UPLINK DNS name or IP-address and press [ENTER]."
+echo -n "Sample - papuasov.dyndns.org: "
+read uplinkdnsaddress
+if [ -z "$uplinkdnsaddress" ]
+then
+echo 'You input nothing.'
+echo 'Please run this script again and input something.'
+exit
+fi
+
+# Checking user input&scrubbing
+ScrubbedCheck6="${uplinkdnsaddress//[^$Alloweddns]/}"
+if [ "$uplinkdnsaddress" = "$ScrubbedCheck6" ]; then
+echo  ''
+else
+echo ' '
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$Alloweddns""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+exit
+fi
+
+
+echo "Enter your NEW UPLINK password and press [ENTER]."
+echo "(not bigger then 8 symbols)"
+echo -n "Sample -  09876543: " 
+read uplinkpassword
+if [ -z "$uplinkpassword" ]
+then
+echo 'You input nothing.'
+echo 'Please run this script again and input something.'
+exit
+fi
+
+# Checking user input&scrubbing
+ScrubbedCheck7="${uplinkpassword//[^$AllowedChars]/}"
+if [ "$uplinkpassword" = "$ScrubbedCheck7" ]; then
+echo  ''
+else
+echo ' '
+echo " Error. You entered wrong symbols. Allowed symbols are: "
+echo -n ' '
+echo -n ""$AllowedChars""
+echo -n '               '
+echo 'Please run this script again and be more carefull during inputing.'
+echo -n '               '
+exit
+fi
+
+
+
+echo ""
+echo "--------------------------------------------------------------------"
+echo ""
+
+echo 
+echo -n "NEW Main UPLINK name is : "
+echo $uplinkname
+echo -n "NEW Main UPLINK FTN address is : "
+echo $uplinkftnaddress
+echo -n "NEW Main UPLINK DNS name or IP-address is: "
+echo $uplinkdnsaddress
+echo -n "NEW Main UPLINK password is: "
+echo $uplinkpassword
+echo ""
+echo "Warning... Please take a note that your previous uplink will be"
+echo "deleted from configuration files. All echoes you are got from this"
+echo "old uplink will be changed to new uplink. So you need to send * to"
+echo "AreaFix and FileFix robots of new uplink. If your uplink to not have"
+echo "some of your echos you need delete such echos from configuration of "
+echo "hpt and subscribe to these echos via other link".
+echo ""
+echo "You are have warned! And know what are you doing"
+echo "--------------------------------------------------------------------"
+echo ""
+# asks if you want to change the original files and acts accordingly.
+
+echo "OK? "
+echo "[y/n]"
+read reply
+echo ""  
+if [ "$reply" = "y" ];
+	then 
+
+
+SHORTNODENAME=`echo $uplinkftnaddress | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+ZONE=`echo $uplinkftnaddress | $SEDT 's|:.*||g' `
+
+SHORTNAMEUPLINK=`echo $uplinkftnaddress | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+
+prevftnaddress=`grep Aka INSTALLDIR/usr/etc/fido/uplink.lst | head -n1 | $SEDT "s|  .*||g" | $SEDT "s|Aka||g" | $SEDT "s| ||g"`
+# Inserting \ before space
+echo  "$prevftnaddress" | $SEDT 's|/|\\/|g' > $TMP/fidoiptmp
+prevftnaddress1=`cat $TMP/fidoiptmp`
+stationname=`cat INSTALLDIR/usr/etc/binkd.cfg | grep sysname | $SEDT "s/sysname//g" | $SEDT 's|"||g' | $SEDT 's| ||g' `
+
+NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
+NODENUMBER1=`echo $NODENUMBER | $SEDT 's|/|\\\/|g'`
+
+SHORTNODESYS=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+
+
+rm -f INSTALLDIR/usr/etc/fido/route-default.lst
+cp INSTALLDIR/usr/etc/fidoip/node/route-default.lst.template-node INSTALLDIR/usr/etc/fido/route-default.lst
+$SEDT -i "s/FIRSTLINK-NODE-NAME/$uplinkname1/g" INSTALLDIR/usr/etc/fido/route-default.lst
+$SEDT -i "s/FIRSTLINK-NODE-ADDRESS/"$uplinkftnaddress1"/g" INSTALLDIR/usr/etc/fido/route-default.lst
+
+rm -f INSTALLDIR/usr/etc/fido/uplink.lst
+cp INSTALLDIR/usr/etc/fidoip/node/uplink.lst.template-node INSTALLDIR/usr/etc/fido/uplink.lst
+$SEDT -i "s/FIRSTLINK-NODE-NAME/$uplinkname1/g" INSTALLDIR/usr/etc/fido/uplink.lst
+$SEDT -i "s/MYNODE-ADDRESS/$NODENUMBER1/g" INSTALLDIR/usr/etc/fido/uplink.lst
+$SEDT -i "s/FIRSTLINK-NODE-ADDRESS/"$uplinkftnaddress1"/g" INSTALLDIR/usr/etc/fido/uplink.lst
+$SEDT -i "s/FIRSTLINK-NODE-PASSWORD/"$uplinkpassword"/g" INSTALLDIR/usr/etc/fido/uplink.lst
+
+cp INSTALLDIR/usr/etc/fidoip/node/macro.cfg.template-node $TMP/macro.cfg.template-node
+$SEDT -i "s/SHORTNODE-NAME/"$SHORTNAMEUPLINK"/g" $TMP/macro.cfg.template-node
+$SEDT -i "s/LINK-NODE-PASSWORD/"$uplinkpassword"/g" $TMP/macro.cfg.template-node
+$SEDT -i "s/LINK-NODE-ADDRESS/"$uplinkftnaddress1"/g" $TMP/macro.cfg.template-node
+cat $TMP/macro.cfg.template-node >> INSTALLDIR/usr/etc/golded+/macro.cfg
+
+grep "binkd" INSTALLDIR/usr/etc/fidoip/node/poll.template-node > $TMP/poll.template-node
+$SEDT -i "s/LINK-NODE-ADDRESS/"$uplinkftnaddress1"/g" $TMP/poll.template-node
+cat $TMP/poll.template-node >> INSTALLDIR/usr/bin/poll
+
+$SEDT -i "s/$prevftnaddress1\ /$uplinkftnaddress1\ /g" INSTALLDIR/usr/etc/fido/config
+$SEDT -i "/$prevftnaddress1,/d" INSTALLDIR/usr/etc/golded+/macro.cfg
+
+rm -f $TMP/poll2.tmp
+
+cat INSTALLDIR/usr/bin/poll > $TMP/poll2.tmp
+
+$SEDT -i "/$prevftnaddress1 /d" $TMP/poll2.tmp
+
+cat $TMP/poll2.tmp > INSTALLDIR/usr/bin/poll
+
+$SEDT -i "/$uplinkftnaddress1 /d" INSTALLDIR/usr/etc/fido/link.lst
+
+rm -f $TMP/binkd.cfg1.tmp
+cat INSTALLDIR/usr/etc/binkd.cfg > $TMP/binkd.cfg1.tmp
+
+$SEDT -i "/First and main link/d" $TMP/binkd.cfg1.tmp
+$SEDT -i "/1-st and Main UPLINK/d" $TMP/binkd.cfg1.tmp
+$SEDT -i "s/$prevftnaddress1\ /$uplinkftnaddress1\ /g" INSTALLDIR/usr/etc/fido/readonly.lst
+
+cat $TMP/binkd.cfg1.tmp > INSTALLDIR/usr/etc/binkd.cfg
+
+cp INSTALLDIR/usr/etc/fidoip/node/binkd.uplink.template-node $TMP/binkd.uplink.template-node
+$SEDT -i "s/FIRSTLINK-NODE-ADDRESS/"$uplinkftnaddress1"/g"  $TMP/binkd.uplink.template-node
+$SEDT -i "s/FIRSTLINK-HOST-DOMAIN-NAME/"$uplinkdnsaddress"/g" $TMP/binkd.uplink.template-node
+$SEDT -i "s/FIRSTLINK-NODE-PASSWORD/"$uplinkpassword"/g" $TMP/binkd.uplink.template-node
+cat $TMP/binkd.uplink.template-node >> INSTALLDIR/usr/etc/binkd.cfg
+
+cp INSTALLDIR/usr/etc/fidoip/node/announce1.template-node $TMP/announce1.template-node
+$SEDT -i "s|LINK-FULL-NAME|$uplinkname1|g" $TMP/announce1.template-node
+$SEDT -i "s|LINK-ADDRESS|$uplinkftnaddress1|g" $TMP/announce1.template-node
+$SEDT -i "s|MYNODE-ADDRESS|$NODENUMBER1|g" $TMP/announce1.template-node
+$SEDT -i "s|SYSTEM-NAME|"$stationname"|g" $TMP/announce1.template-node
+
+echo
+echo "Generating announce messages"
+echo ""
+
+export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "http://sourceforge.net/apps/mediawiki/fidoip" -s "Uplink changed to ""$uplinkftnaddress"" link" -e ""$SHORTNODESYS".official" -d INSTALLDIR/fido/localinb $TMP/announce1.template-node
+
+INSTALLDIR/usr/bin/toss 2> /dev/null
+
+
+echo "OK. Original configuration files modified successfully."
+
+rm -rf $TMP
+
+
+elif [ "$reply" = "n" ];
+	then 
+echo "Please run this script again."
+
+fi

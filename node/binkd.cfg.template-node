@@ -1,0 +1,60 @@
+#---INSTALLDIR/usr/etc/binkd.cfg---
+domain fidonet INSTALLDIR/fido/outbound ZONE-NUMBER
+domain fido alias-for fidonet
+domain fidonet.org alias-for fidonet
+
+address MYNODE-ADDRESS@fidonet
+sysname "SYSTEM-NAME"
+location "LOCATION-TOWN"
+sysop "SYSTEM-OPERATOR-NAME"
+nodeinfo 4M,TCP,BINKP,ICM,INA:MYHOST-DOMAIN-NAME
+#bindaddr MYHOST-DOMAIN-NAME  # Uncomment this row only if you have more then one nodes and bind binkd to specific IP
+#iport 433                    # Uncomment this row only if you have more then one nodes and bind binkd to specific non standard TCP port(not 24554)
+call-delay 120
+rescan-delay 5
+try 2
+hold 360
+deletedirs
+maxclients 250
+maxservers 250
+oblksize 32767
+send-if-pwd
+#backresolv
+log INSTALLDIR/fido/binkd.log
+loglevel 4
+binlog INSTALLDIR/fido/binkd.sts
+conlog 4
+percents
+printq
+pid-file INSTALLDIR/fido/binkd.pid
+inbound INSTALLDIR/fido/protinb
+inbound-nonsecure INSTALLDIR/fido/inbound
+temp-inbound INSTALLDIR/fido/tempinb
+minfree 10240
+minfree-nonsecure 10240
+kill-dup-partial-files
+kill-old-partial-files 86400
+kill-old-bsy 12h
+exec "INSTALLDIR/usr/bin/toss" *.su? *.mo? *.tu? *.we? *.th? *.fr? *.sa? *.pkt
+filebox   INSTALLDIR/fido/filebox
+brakebox  INSTALLDIR/fido/badarea
+prescan
+
+perl-hooks INSTALLDIR/usr/bin/nodelist.pl
+perl-var nodelist fidonet:INSTALLDIR/fido/nodelist/nodelist.txt
+perl-var magichost *
+
+# First and main link
+node FIRSTLINK-NODE-ADDRESS FIRSTLINK-HOST-DOMAIN-NAME FIRSTLINK-NODE-PASSWORD c INSTALLDIR/fido/2uplink    #### 1-st Link and Main UPLINK connection. Do not edit this comment
+
+# Proxy setting - if using proxy server uncomment below line and change it accordingly your settings of server:port: 
+#proxy MYHOST-DOMAIN-NAME:3128 
+
+# Point 1 - Sysop second point for access from other PC by network
+node MYNODE-ADDRESS.1 - MYPOINT-PASSWORD ##  For access from network Sysop point first. Do not edit this comment or scripts addpoint and removepoint will not work. 
+
+# share MYNODE-ADDRESS FIRSTLINK-NODE-ADDRESS NEXT-NODE-ADDRESS1 NEXT-NODE-ADDRESS2 # Uncomment this row only if you have more then one uplink and whould like to allow automatic netmail sharing to make your netmail recvieve and send even if one of link is not avalaible. Instead of NEXT-NODE-ADDRESS* put second and allnext of your uplinks  
+
+# User links and points section
+
+

@@ -1,0 +1,2 @@
+#!/bin/sh
+luit -x -encoding koi8-r INSTALLDIR/usr/bin/ge

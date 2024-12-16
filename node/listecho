@@ -1,0 +1,57 @@
+#!/bin/bash
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+# Shows list active echos of database
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
+SEDT="sed"  # Sed program type
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+cat INSTALLDIR/usr/etc/fido/config | grep --binary-files=text "Area "  | grep --binary-files=text -v "#" | $SEDT '/./!d' > $TMP/echo.list.tmp
+cat $TMP/echo.list.tmp | $SEDT "s| -a .*||g"  | $SEDT "s| -b .*||g" | $SEDT "/LocalArea/d" | $SEDT "/DupeArea/d" | $SEDT "/dupearea/d" | $SEDT "/NetmailArea/d" | $SEDT "/netmailarea/d" | $SEDT "/BadArea/d"| $SEDT "/badarea/d" | sort >  $TMP/echo.info.tmp
+
+NUMBER=`cat $TMP/echo.info.tmp | wc -l`
+
+if [ $NUMBER = "0" ];then
+echo  
+echo  "#=================================================="
+echo "# No echos in INSTALLDIR/usr/etc/fido/config"
+echo  "#=================================================="
+rm -rf $TMP
+exit
+fi
+
+echo  
+echo  "#=================================================="
+echo "$NUMBER echo found in INSTALLDIR/usr/etc/fido/config"
+echo  "#=================================================="
+echo "# Here is echo informaion regarging"
+echo "# configuration file INSTALLDIR/usr/etc/fido/config:"
+echo  "#=================================================="
+echo "# Type:   Echo name:    Location:"
+echo  "#=================================================="
+i=1
+NUMBER=$(($NUMBER+1))
+while [ "$i" -ne "$NUMBER" ]
+do
+echo "`sed -n ""$i"p" $TMP/echo.info.tmp`"
+i=$(($i+1))
+done
+
+rm -rf $TMP
+

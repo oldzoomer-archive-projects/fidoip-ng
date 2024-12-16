@@ -1,0 +1,86 @@
+#!/bin/bash
+#   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
+#   by the GNU general public license. See the file LICENSE for details. */
+# Monthly statistics reports script genetation for fidoip node
+# Run this script montly by cron at last day of month at 23:58
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files 
+SEDT="sed"  # Sed program type
+NCAL=`find /  -name 'cal' -print  2>/dev/null`
+
+T1="root"
+T2="Linux"
+T3="FreeBSD"
+T4="DragonFly"
+
+if [ "$SYSOS" = "$T3" ]; then
+Z1="BSD"
+SEDT="gsed"
+fi
+
+if [ "$SYSOS" = "$T4" ]; then
+Z1="BSD"
+Z2="PKGSRC"
+SEDT="gsed"
+fi
+
+if [ -e INSTALLDIR/usr/etc/fido/routing.lst ]; then
+echo
+else
+echo  "============================================================================"
+echo "FIDO node configuration doesnt't exist. To create run setup_node.bash first."
+echo  "============================================================================"
+sleep 1
+rm -rf $TMP
+exit
+fi
+
+if [ -e "$NCAL" ]; then
+NUMBERDAYS=`INSTALLDIR/usr/bin/monthlong`
+else
+echo  "============================================================================"
+echo "cal utility is not installed. Needs to install packages: ncal or bcal."
+echo "Please install it from repository. Then start this script again."
+echo  "============================================================================"
+sleep 1
+NUMBERDAYS=`INSTALLDIR/usr/bin/monthlong`
+fi
+
+NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
+NODENUMBER1=`echo $NODENUMBER | $SEDT 's|/|\\\/|g'`
+SHORTNODENAME=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+
+
+INSTALLDIR/usr/bin/binkdstat.pl -d$NUMBERDAYS > INSTALLDIR/fido/binkd-monthly.rpt
+INSTALLDIR/usr/bin/hptlogstat.pl $NUMBERDAYS -traffic > INSTALLDIR/fido/hpt-monthly.rpt
+INSTALLDIR/usr/bin/st_htick.pl $NUMBERDAYS > INSTALLDIR/fido/htick-monthly.rpt
+
+echo  "============================================================================"
+echo "Cleaning up old outbound files"
+echo  "============================================================================"
+echo
+INSTALLDIR/usr/bin/clean_outb
+
+#echo "Compact message bases, deleting old messages"
+#export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config
+#INSTALLDIR/usr/bin/sqpack "*"
+
+echo  "============================================================================"
+echo "Generating monthly statistics of binkd, hpt and htick and post it to "$SHORTNODENAME".robots"
+echo  "============================================================================"
+echo
+export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config 
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Mailer statistic for node "$NODENUMBER"(monthly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/binkd-monthly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Tosser statistic for node "$NODENUMBER"(monthly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/hpt-monthly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Files statistics for node "$NODENUMBER"(monthly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/htick-monthly.rpt
+echo  "============================================================================"
+echo "Sending rules to "$SHORTNODENAME".local, "$SHORTNODENAME".test, "$SHORTNODENAME".forwards"
+echo  "============================================================================"
+
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Rules of ""$SHORTNODENAME"".test" -e ""$SHORTNODENAME".test" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/rules2.txt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Rules of ""$SHORTNODENAME"".forwards" -e ""$SHORTNODENAME".forwards" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/rules1.txt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Rules of ""$SHORTNODENAME"".local" -e ""$SHORTNODENAME".local" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/rules.txt
+INSTALLDIR/usr/bin/toss
+
+rm -rf $TMP
+

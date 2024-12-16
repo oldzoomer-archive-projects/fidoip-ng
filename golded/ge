@@ -1,0 +1,5 @@
+#!/bin/sh
+INSTALLDIR/usr/bin/gedlnx -CINSTALLDIR/usr/etc/golded+/golded.cfg
+
+
+

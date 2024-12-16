@@ -1,0 +1,2 @@
+#!/bin/sh
+INSTALLDIR/usr/sbin/binkd -p -P LINK-NODE-ADDRESS INSTALLDIR/usr/etc/binkd.cfg ; sync    #### Do not edit this comment or scripts addlink and removelink will not work for  LINK-NODE-ADDRESS link 
