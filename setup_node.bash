@@ -830,6 +830,9 @@ echo
 chmod -R 755 "$HOMEDIR"/usr/etc/rc.d/binkdsrv
 chmod -R 755 "$HOMEDIR"/usr/etc/rc.d/bnkd.srv
 chmod -R 644 "$HOMEDIR"/usr/etc/rc.d/binkd.service
+
+"$HOMEDIR"/usr/bin/nodelist.sh
+
 echo "========================================================"
 echo "OK. Original configuration files for node modified successfully."
 echo "Please review configuration files."  
