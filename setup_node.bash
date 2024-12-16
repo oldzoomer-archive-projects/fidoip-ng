@@ -818,6 +818,9 @@ $SEDT -i "s|INSTALLDIR|$HOMEDIR|g" "$HOMEDIR"/usr/etc/rc.d/binkdsrv
 $SEDT -i "s|INSTALLDIR|$HOMEDIR|g" "$HOMEDIR"/usr/etc/rc.d/bnkd.srv
 $SEDT -i "s|INSTALLDIR|$HOMEDIR|g" "$HOMEDIR"/usr/etc/rc.d/binkd.service
 
+$SEDT -i "s|USER|$IDN|g" "$HOMEDIR"/usr/etc/rc.d/binkd.service
+$SEDT -i "s|GROUP|$IDG|g" "$HOMEDIR"/usr/etc/rc.d/binkd.service
+
 echo
 echo  "========================================================"
 echo "Setting up permissions for start binkd service scripts: "
