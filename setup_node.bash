@@ -640,7 +640,6 @@ $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/config
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/link.lst
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-default.lst
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/areas.lst
-$SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-default.lst
 
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/golded+/golded.cfg
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/readonly.lst
@@ -687,12 +686,10 @@ $SEDT -i "s/FIRSTLINK-NODE-ADDRESS/""$uplinkftnaddress1""/g" "$HOMEDIR"/usr/etc/
 $SEDT -i "s/FIRSTLINK-NODE-ADDRESS/""$uplinkftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/link.lst
 $SEDT -i "s/FIRSTLINK-NODE-ADDRESS/""$uplinkftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-default.lst
 
-
 $SEDT -i "s/FIRSTLINK-HOST-DOMAIN-NAME/""$uplinkdnsaddress""/g" "$HOMEDIR"/usr/etc/binkd.cfg
 
 $SEDT -i "s/FIRSTLINK-NODE-PASSWORD/""$uplinkpassword""/g" "$HOMEDIR"/usr/etc/binkd.cfg
 $SEDT -i "s/FIRSTLINK-NODE-PASSWORD/""$uplinkpassword""/g" "$HOMEDIR"/usr/etc/fido/link.lst
-
 
 $SEDT -i "s/SHORTNODE-NAME/""$SHORTNAMEUPLINK""/g" "$HOMEDIR"/usr/etc/golded+/macro.cfg
 $SEDT -i "s/LINK-NODE-PASSWORD/""$uplinkpassword""/g" "$HOMEDIR"/usr/etc/golded+/macro.cfg
@@ -711,7 +708,6 @@ pointname=$(echo "$fullname" | $SEDT "s| .*||g")
 cp "$HOMEDIR"/usr/etc/fidoip/node/welcome2.template-node "$TMP"/welcome2.template-node
 cp "$HOMEDIR"/usr/etc/fidoip/node/announce1.template-node "$TMP"/announce1.template-node
 cp "$HOMEDIR"/usr/etc/fidoip/node/announce.template-node "$TMP"/announce.template-node
-
 
 $SEDT -i "s|POINT-NAME|$pointname|g" "$TMP"/welcome2.template-node
 $SEDT -i "s|MYNODE-ADDRESS|$ftnaddress1|g" "$TMP"/welcome2.template-node
@@ -739,7 +735,6 @@ $SEDT -i "s|SYSTEM-NAME|""$stationname1""|g" "$HOMEDIR"/fido/rules.txt
 $SEDT -i "s|MYNODE-ADDRESS|$ftnaddress1|g" "$HOMEDIR"/fido/rules.txt
 $SEDT -i "s/SHORTNODE-NAME/""$SHORTNODENAME""/g" "$HOMEDIR"/fido/rules.txt
 $SEDT -i "s/SYSTEM-OPERATOR-NAME/$fullname/g" "$HOMEDIR"/fido/rules.txt
-
 
 echo
 echo  "=================================================="
@@ -814,8 +809,6 @@ export FIDOCONFIG=$HOMEDIR/usr/etc/fido/config
 "$HOMEDIR"/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$ftnaddress".1  -xt "$ftnaddress"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Rules of ""$SHORTNODENAME"".local" -e """$SHORTNODENAME"".local" -d "$HOMEDIR"/fido/localinb "$HOMEDIR"/fido/rules.txt
 
 "$HOMEDIR"/usr/bin/toss 2> /dev/null
-
-
 
 $SEDT -i "s|INSTALLDIR|$HOMEDIR|g" "$HOMEDIR"/usr/etc/rc.d/binkdsrv
 $SEDT -i "s|INSTALLDIR|$HOMEDIR|g" "$HOMEDIR"/usr/etc/rc.d/bnkd.srv

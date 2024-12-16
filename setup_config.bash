@@ -588,6 +588,12 @@ cat "$CWD"/golded/g | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/bin/g
 cat "$CWD"/golded/gl | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/bin/gl
 cat "$CWD"/golded/nodelist.sh | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/bin/nodelist.sh
 
+$SEDT -i -e '/NODELIST/!b' -e 's/net5020.ndl/nodelist.txt/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
+$SEDT -i -e '/NODELIST/!b' -e "/pnt5020.ndl/d" "$HOMEDIR"/usr/etc/golded+/golded.cfg
+
+$SEDT -i -e '/UseSoftCRxlat/!b' -e 's/Yes/No/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
+$SEDT -i -e '/DispSoftCr/!b' -e "s/Yes/No/g" "$HOMEDIR"/usr/etc/golded+/golded.cfg
+
 cp "$HOMEDIR"/usr/bin/send "$HOMEDIR"/usr/bin/rs
 
 cp "$CWD"/husky/checkhpt.sh "$HOMEDIR"/usr/bin/
@@ -626,7 +632,7 @@ fi
 
 chmod 644 "$HOMEDIR"/fido/*.log
 chmod 644 "$HOMEDIR"/fido/*.hlp
-chmod 644 "$HOMEDIR"/fido/nodelist/*.ndl
+chmod 644 "$HOMEDIR"/fido/nodelist/nodelist.txt
 chmod 644 "$HOMEDIR"/fido/nodelist/*.g*
 chmod 644 "$HOMEDIR"/usr/etc/*.cfg
 chmod 644 "$HOMEDIR"/usr/etc/*.conf-dist
@@ -653,6 +659,8 @@ chmod 644 "$HOMEDIR"/usr/lib/*.a
 chmod 644 "$HOMEDIR"/usr/share/doc/fidoconf/*.html
 chmod 644 "$HOMEDIR"/usr/share/info/*.info
 chmod 644 "$HOMEDIR"/usr/share/man/man1/*.1
+
+"$HOMEDIR"/usr/bin/nodelist.sh
 
 set -e
 
