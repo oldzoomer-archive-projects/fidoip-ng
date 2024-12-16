@@ -672,6 +672,9 @@ $SEDT -i "s/SYSTEM-OPERATOR-NAME/$fullname/g" "$HOMEDIR"/fido/filefix.hlp
 $SEDT -i -e '/NODELIST/!b' -e 's/net5020.ndl/nodelist.txt/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
 $SEDT -i -e '/NODELIST/!b' -e "/pnt5020.ndl/d" "$HOMEDIR"/usr/etc/golded+/golded.cfg
 
+$SEDT -i -e '/UseSoftCRxlat/!b' -e 's/Yes/No/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
+$SEDT -i -e '/DispSoftCr/!b' -e "s/Yes/No/g" "$HOMEDIR"/usr/etc/golded+/golded.cfg
+
 $SEDT -i "s/MYPOINT-PASSWORD/""$point1password""/g" "$HOMEDIR"/usr/etc/binkd.cfg
 $SEDT -i "s/MYPOINT-PASSWORD/""$point1password""/g" "$HOMEDIR"/usr/etc/fido/link.lst
 
