@@ -66,12 +66,12 @@ killrequests yes
 reportsattr loc pvt k/s npd
 
 # настройки только для этого робота
-robot areafix
+robot AreaFix
 fromname Areafix robot
 robotorigin Areafix robot
 
 # настройки только для этого робота
-robot filefix
+robot FileFix
 fromname FileFix robot
 robotorigin FileFix robot
 FileFixKillRequests
