@@ -7,7 +7,7 @@ address MYNODE-ADDRESS@fidonet
 sysname "SYSTEM-NAME"
 location "LOCATION-TOWN"
 sysop "SYSTEM-OPERATOR-NAME"
-nodeinfo 4M,TCP,BINKP,ICM,INA:MYHOST-DOMAIN-NAME
+nodeinfo 300,IBN,CM,INA:MYHOST-DOMAIN-NAME
 #bindaddr MYHOST-DOMAIN-NAME  # Uncomment this row only if you have more then one nodes and bind binkd to specific IP
 #iport 433                    # Uncomment this row only if you have more then one nodes and bind binkd to specific non standard TCP port(not 24554)
 call-delay 120
