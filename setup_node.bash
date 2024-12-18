@@ -599,8 +599,8 @@ cp -p "$HOMEDIR"/usr/etc/fidoip/node/poll.template-node "$HOMEDIR"/usr/bin/poll
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/toss "$HOMEDIR"/usr/bin/toss
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/readonly.lst.template-node "$HOMEDIR"/usr/etc/fido/readonly.lst
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/macro.cfg.template-node "$HOMEDIR"/usr/etc/golded+/macro.cfg
+cp -p "$HOMEDIR"/usr/etc/fidoip/node/route-points.lst.template-node  "$HOMEDIR"/usr/etc/fido/route-points.lst
 
-touch "$HOMEDIR"/usr/etc/fido/route-points.lst
 touch "$HOMEDIR"/usr/etc/fido/routing.lst
 touch "$HOMEDIR"/usr/etc/fido/point.lst
 cp "$HOMEDIR"/usr/etc/fidoip/node/areafix.template-node "$HOMEDIR"/fido/areafix.hlp
@@ -643,7 +643,10 @@ $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/binkd.cfg
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/config
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/link.lst
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-node.lst
+$SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-points.lst
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/areas.lst
+
+$SEDT -i "s/POINT-NUMBER/1/g" "$HOMEDIR"/usr/etc/fido/route-points.lst
 
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/golded+/golded.cfg
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/readonly.lst
@@ -830,6 +833,11 @@ chmod -R 755 "$HOMEDIR"/usr/etc/rc.d/binkdsrv
 chmod -R 755 "$HOMEDIR"/usr/etc/rc.d/bnkd.srv
 chmod -R 644 "$HOMEDIR"/usr/etc/rc.d/binkd.service
 
+echo
+echo  "========================================================"
+echo "Setting up nodelist in GoldED+: "
+echo  "========================================================"
+echo
 "$HOMEDIR"/usr/bin/nodelist.sh
 
 echo "========================================================"
