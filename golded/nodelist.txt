@@ -1,4 +1,4 @@
-;A FidoNet Nodelist for Monday, December 16, 2024 -- Day number 351 : 09738
+;A FidoNet Nodelist for Wednesday, December 18, 2024 -- Day number 353 : 17933
 ;A The FidoNet Z2DAILY, a listing of the systems within FidoNet.
 ;A
 ;A  This is the Z2DAILY produced at 2:2/0
@@ -32,7 +32,7 @@
 ;S        +------------------------------------------------------------+
 ;S
 ;
-Zone,1,North_America_(349),Toronto,Nick_Andre,1-647-847-2083,9600,CM,XX,INA:bbs.darkrealms.ca,IBN,ITN,PING,TRACE
+Zone,1,North_America_(352),Toronto,Nick_Andre,1-647-847-2083,9600,CM,XX,INA:bbs.darkrealms.ca,IBN,ITN,PING,TRACE
 ,1,ZC1_US_dialup_relay,Beverly_Hills_CA,Nick_Andre,1-424-402-1056,9600,CM,XX,PING,TRACE
 ,19,FTSC_Administrator,Groton_CT,Andrew_Leary,1-860-446-6118,33600,H16,V34,VFC,V32T,XA,CM,INA:ftsc.bnbbbs.net,IBN:24555,IFC,ITN:60177,PING,TRACE
 ,101,ProBoard_Support,Rochester_NY,Jason_Bock,-Unpublished-,300,CM,MO,LO,INA:siliconu.com,IBN
@@ -461,7 +461,7 @@ Host,396,New_Orleans_Area,Huntsville_AL,Marc_Lewis,1-256-895-4786,33600,CM,XA,V4
 Pvt,4,Net396_News_Gate,Huntsville_AL,Marc_Lewis,-Unpublished-,9600,XA
 ,45,Sursum_Corda,Huntsville_AL,Marc_Lewis,1-256-895-4786,33600,CM,XA,INA:sursum-corda.com,ITN,IBN,IFT
 ;
-Zone,2,Eur_(351),B,Ward_Dossche,-Unpublished-,300,CM,MO,INA:many-glacier.dyndns.org,IBN,IFT,PING,IMI:fido@dossche.org,U,ENC
+Zone,2,Eur_(353),B,Ward_Dossche,-Unpublished-,300,CM,MO,INA:many-glacier.dyndns.org,IBN,IFT,PING,IMI:fido@dossche.org,U,ENC
 ,2,Fidonews_Editor,Sweden,Bjorn_Felten,46-31-960447,33600,CM,XA,V34,INA:eljaco.se,IBN:24555
 ,29,WinPoint_Help,D,Tim_Schattkowsky,-Unpublished-,300
 ,222,BBBS_Help,Turku_Finland,Kim_Heino,-Unpublished-,300,CM,XX,INA:bbbs.net,IBN,ITN
@@ -597,7 +597,7 @@ Host,263,Ireland(EIRE)_Net,Hatfield_Hertfordshire_UK,Vince_Coen,-Unpublished-,30
 ;
 Region,28,Nederland,NL,Kees_van_Eeten,-Unpublished-,300,MO,CM,XW,IBN:fido.ddutch.nl,U,ENC
 ;
-Host,280,Nederland(350),Heerhugowaard,Kees_van_Eeten,-Unpublished-,300,CM,MO,XW,IBN:fido.ddutch.nl,U,ENC
+Host,280,Nederland(352),Heerhugowaard,Kees_van_Eeten,-Unpublished-,300,CM,MO,XW,IBN:fido.ddutch.nl,U,ENC
 ,464,FMail_DEV_fka_AOBL,Lisse,Wilfred_van_Velzen,-Unpublished-,300,CM,MO,IBN:fmailhq.fidoweb.net,PING,TRACE,U,ENC,RPK,NPK
 ,1049,The_Coast,NL,Simon_Voortman,-Unpublished-,300,CM,MO,XA,IBN:thecoastbbs.nl
 ,1203,Randstad,NL,Frank_de_Bruijn,-Unpublished-,300,CM,MO,IBN:randstad.aconet.org
@@ -623,8 +623,8 @@ Pvt,100,-Unknown-,Top_Secret_Location,Bart_Verhaeghe,-Unpublished-,300
 Host,292,Belgium,Lennik,Niels_Joncheere,-Unpublished-,300,CM,MO,INA:fido.joncheere.be,IBN
 ,789,The_Millennium_BBS,Lennik,Niels_Joncheere,-Unpublished-,300,CM,MO,INA:fido.joncheere.be,IBN,U,RPK,NPK
 ,2226,SPARK_BBS,BE,Christian_Vanguers,-Unpublished-,300,CM,MO,INA:poll.sparkbbs.eu,IBN
-Hub,80,Hub_80_(350),Belgie,Ward_Dossche,-Unpublished-,300,CM,MO,INA:many-glacier.dyndns.org,IBN,IFT,IMI:fido@dossche.org,PING,U,ENC
-,854,Many-Glacier_(350),Mortsel_B,Ward_Dossche,-Unpublished-,300,CM,MO,INA:many-glacier.dyndns.org,IBN,IFT,IMI:fido@dossche.org,PING,U,ENC
+Hub,80,Hub_80_(352),Belgie,Ward_Dossche,-Unpublished-,300,CM,MO,INA:many-glacier.dyndns.org,IBN,IFT,IMI:fido@dossche.org,PING,U,ENC
+,854,Many-Glacier_(352),Mortsel_B,Ward_Dossche,-Unpublished-,300,CM,MO,INA:many-glacier.dyndns.org,IBN,IFT,IMI:fido@dossche.org,PING,U,ENC
 Pvt,140,Light_Station,Leuven,Rudi_Timmermans,-Unpublished-,300
 ,8125,BrainDeath_BBS,Lier,Tom_De_Puysseleyr,-Unpublished-,300,CM,MO,INA:fido.braindeath.be,IBN,PING
 ;
@@ -920,7 +920,7 @@ Host,5015,NiNoNet,Nizhny_Novgorod_(xGorky)_Russia,Dmitry_Radishev,-Unpublished-,
 ,8818,Forest_station,Nizhny_Novgorod,Andrey_Volkov,-Unpublished-,300,CM,IEM:f8818n5015z2@mail.ru
 ;
 Host,5019,SkifNet,Smolensk_Russia,Konstantin_Kuzov,-Unpublished-,300,CM,IBN,IFC,INA:fido.ganjanetwork.ru,PING,U,SMH
-Hub,40,GaNJaNET_STaTi0N,Smolensk,Konstantin_Kuzov,-Unpublished-,300,CM,IBN,IFC,INA:fido.ganjanetwork.ru,PING,U,SMH,NPK
+Hub,40,GaNJaNET_STaTi0N,Smolensk,Konstantin_Kuzov,-Unpublished-,300,CM,IBN,IFC,INA:fido.ganjanetwork.ru,PING,TRACE,U,SMH,NPK
 ,21,Smile_System,Smolensk,Yura_Tsvetkov,-Unpublished-,300,CM,IBN,INA:gamayun.ru.net
 ,29,SharkMailSystem,Smolensk,Alex_Polikarpov,-Unpublished-,300,CM,IBN,INA:shark-mail-system.ru
 ,41,BobaHome,Smolensk,Vladimir_Pavlenko,-Unpublished-,300,CM,IBN,INA:ruqrz.com
