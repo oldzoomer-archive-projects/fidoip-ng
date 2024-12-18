@@ -107,12 +107,13 @@ include INSTALLDIR/usr/etc/fido/link.lst
 # для внесения изменений используйте команды addpoint и removepoint
 include INSTALLDIR/usr/etc/fido/point.lst
 
-# маршрутизации нетмейла для аплинка
-include INSTALLDIR/usr/etc/fido/route-default.lst
-# и маршрутизации нетмейла прочих узлов
-# не редактируйте этот файл руками
+# маршрутизации нетмейла для поинтов и аплинков
+include INSTALLDIR/usr/etc/fido/route-node.lst
+include INSTALLDIR/usr/etc/fido/route-points.lst
+# не редактируйте эти файлы руками
 # для внесения изменений используйте команды addlink и removelink
 include INSTALLDIR/usr/etc/fido/routing.lst
+include INSTALLDIR/usr/etc/fido/route-default.lst
 
 FileFixKillRequests
 FileFixReportsAttr      loc pvt k/s  # kill filefix reports

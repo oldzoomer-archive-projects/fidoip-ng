@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 # Shows list active echos of database
-SYSOS=`uname -s` # Packages architecture
-TMP=`mktemp -d`	# Location of temp's files
+SYSOS=$(uname -s) # Packages architecture
+TMP=$(mktemp -d)	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -22,17 +22,17 @@ Z2="PKGSRC"
 SEDT="gsed"
 fi
 
-cat INSTALLDIR/usr/etc/fido/config | grep --binary-files=text "Area "  | grep --binary-files=text -v "#" | $SEDT '/./!d' > $TMP/echo.list.tmp
-cat $TMP/echo.list.tmp | $SEDT "s| -a .*||g"  | $SEDT "s| -b .*||g" | $SEDT "/LocalArea/d" | $SEDT "/DupeArea/d" | $SEDT "/dupearea/d" | $SEDT "/NetmailArea/d" | $SEDT "/netmailarea/d" | $SEDT "/BadArea/d"| $SEDT "/badarea/d" | sort >  $TMP/echo.info.tmp
+cat INSTALLDIR/usr/etc/fido/config | grep --binary-files=text "Area "  | grep --binary-files=text -v "#" | $SEDT '/./!d' > "$TMP"/echo.list.tmp
+cat "$TMP"/echo.list.tmp | $SEDT "s| -a .*||g"  | $SEDT "s| -b .*||g" | $SEDT "/LocalArea/d" | $SEDT "/DupeArea/d" | $SEDT "/dupearea/d" | $SEDT "/NetmailArea/d" | $SEDT "/netmailarea/d" | $SEDT "/BadArea/d"| $SEDT "/badarea/d" | sort >  "$TMP"/echo.info.tmp
 
-NUMBER=`cat $TMP/echo.info.tmp | wc -l`
+NUMBER=$(cat "$TMP"/echo.info.tmp | wc -l)
 
-if [ $NUMBER = "0" ];then
+if [ "$NUMBER" = "0" ];then
 echo  
 echo  "#=================================================="
 echo "# No echos in INSTALLDIR/usr/etc/fido/config"
 echo  "#=================================================="
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -49,9 +49,9 @@ i=1
 NUMBER=$(($NUMBER+1))
 while [ "$i" -ne "$NUMBER" ]
 do
-echo "`sed -n ""$i"p" $TMP/echo.info.tmp`"
+echo "$(sed -n ""$i"p" "$TMP"/echo.info.tmp)"
 i=$(($i+1))
 done
 
-rm -rf $TMP
+rm -rf "$TMP"
 

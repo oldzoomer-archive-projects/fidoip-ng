@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 #  Shows point's database and details info regarding selected point
-SYSOS=`uname -s` # Packages architecture
-TMP=`mktemp -d`	# Location of temp's files
+SYSOS=$(uname -s) # Packages architecture
+TMP=$(mktemp -d)	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -22,12 +22,12 @@ Z2="PKGSRC"
 SEDT="gsed"
 fi
 
-cat INSTALLDIR/usr/etc/binkd.cfg | grep " point "  > $TMP/point.list.tmp
+cat INSTALLDIR/usr/etc/binkd.cfg | grep " point "  > "$TMP"/point.list.tmp
  
-cat $TMP/point.list.tmp | $SEDT "s|##||g" | $SEDT "s|  | |g" | $SEDT "s| point .*||g" |   grep -v "#"  | $SEDT "s/node//g" | $SEDT "s| - |   |g" >  $TMP/point.info.tmp
-POINTINFO=`cat $TMP/point.info.tmp`
+cat "$TMP"/point.list.tmp | $SEDT "s|##||g" | $SEDT "s|  | |g" | $SEDT "s| point .*||g" |   grep -v "#"  | $SEDT "s/node//g" | $SEDT "s| - |   |g" >  "$TMP"/point.info.tmp
+POINTINFO=$(cat "$TMP"/point.info.tmp)
 
-NUMBER=`cat $TMP/point.info.tmp | wc -l`
+NUMBER=$(cat "$TMP"/point.info.tmp | wc -l)
 
 echo  "#=================================================="
 echo "# $NUMBER point found in INSTALLDIR/usr/etc/binkd.cfg"
@@ -40,9 +40,9 @@ i=1
 NUMBER=$(($NUMBER+1))
 while [ "$i" -ne "$NUMBER" ]
 do
-echo " "$i" `$SEDT -n ""$i"p" $TMP/point.info.tmp`"
+echo " "$i" $($SEDT -n ""$i"p" "$TMP"/point.info.tmp)"
 i=$(($i+1))
 done
 echo  "#=================================================="
-rm -rf $TMP
+rm -rf "$TMP"
 

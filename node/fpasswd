@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 #  change password for point or link 
-SYSOS=`uname -s` # Packages architecture
-TMP=`mktemp -d`	# Location of temp's files
+SYSOS=$(uname -s) # Packages architecture
+TMP=$(mktemp -d)	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -46,7 +46,7 @@ if [ -z "$ftnnumber" ]
 then
 echo 'To change password need input FTN address link or point.'
 echo "You input nothing. Try to input next try. Exiting."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -61,72 +61,72 @@ echo -n ""$AllowedFtn""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-CHECKFTN=`echo "$ftnnumber" | grep "\\/" `
+CHECKFTN=$(echo "$ftnnumber" | grep "\\/" )
 if [ -z "$CHECKFTN" ]
 then
 echo 'No symbol / in FTN number.'
 echo "Try to input next try. Exiting."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-CHECKFTN1=`echo "$ftnnumber" | grep ":" `
+CHECKFTN1=$(echo "$ftnnumber" | grep ":" )
 if [ -z "$CHECKFTN1" ]
 then
 echo 'No symbol : in FTN number.'
 echo "Try to input next try. Exiting."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 
 # Inserting \ before . as dot alway brings problems with regexp
-echo  "$ftnnumber" | $SEDT 's|\.|\\\.|' > $TMP/fidoiptmp
-ftnnumber1=`cat $TMP/fidoiptmp`
+echo  "$ftnnumber" | $SEDT 's|\.|\\\.|' > "$TMP"/fidoiptmp
+ftnnumber1=$(cat "$TMP"/fidoiptmp)
 
 ARR0=(" ""$ftnnumber1"" ")
 echo "Checking if this FTN number exist in binkd.cfg configuration file."
-Z=`cat INSTALLDIR/usr/etc/binkd.cfg | grep "##" | grep -e "${ARR0[*]}" | $SEDT "s|##.*||g" | $SEDT "s| c .*||g" `
+Z=$(cat INSTALLDIR/usr/etc/binkd.cfg | grep "##" | grep -e "${ARR0[*]}" | $SEDT "s|##.*||g" | $SEDT "s| c .*||g" )
 if [ -z "$Z" ]
 then
 echo "No such point or link number in configuration files. Exit."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 else
 echo 
 
-cat INSTALLDIR/usr/etc/binkd.cfg | grep "##" | grep -e "${ARR0[*]}" | $SEDT "s|##.*||g" | $SEDT "s| c .*||g" > $TMP/testpass
-CHE=`$SEDT -n ""2"p" $TMP/testpass`
+cat INSTALLDIR/usr/etc/binkd.cfg | grep "##" | grep -e "${ARR0[*]}" | $SEDT "s|##.*||g" | $SEDT "s| c .*||g" > "$TMP"/testpass
+CHE=$($SEDT -n ""2"p" "$TMP"/testpass)
 if [ "$CHE" = "" ];
 then
 echo
 else
 echo "Not one password in configuration. Seems 2 or more your links or points have same password"
 echo "Cannot change password, exit."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 cat INSTALLDIR/usr/etc/fido/link.lst | grep -v "#" | grep -v "route" | grep -A 2 -e "${ARR0[*]}" | grep "password " |   $SEDT "s|password ||g"  | $SEDT  "s| ||g" > "$TMP"/testpass1
-CHE1=`$SEDT -n ""1"p" $TMP/testpass1`
+CHE1=$($SEDT -n ""1"p" "$TMP"/testpass1)
 if [ "$CHE1" = "" ];
 then
 cat INSTALLDIR/usr/etc/fido/point.lst | grep -v "#" | grep -v "route" | grep -A 2 -e "${ARR0[*]}" | grep "password " |   $SEDT "s|password ||g"  | $SEDT  "s| ||g"  > "$TMP"/testpass2
-GETPASSWORD=`$SEDT -n ""1"p" $TMP/testpass2`
+GETPASSWORD=$($SEDT -n ""1"p" "$TMP"/testpass2)
 else
-GETPASSWORD=`$SEDT -n ""1"p" $TMP/testpass1`
+GETPASSWORD=$($SEDT -n ""1"p" "$TMP"/testpass1)
 fi
 
 echo
 echo  "=================================================="
-echo "Changing password "$GETPASSWORD" to new one..."
+echo "Changing password ""$GETPASSWORD"" to new one..."
 echo  "=================================================="
 echo
-echo "Enter new password for "$ftnnumber" and press [ENTER]."
+echo "Enter new password for ""$ftnnumber"" and press [ENTER]."
 echo "(not bigger then 8 symbols)"
 echo -n "Sample -  09876543: " 
 read linkpassword
@@ -134,7 +134,7 @@ if [ -z "$linkpassword" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -150,12 +150,12 @@ echo -n ""$AllowedPwd""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-grep "password\ "$linkpassword"\ " INSTALLDIR/usr/etc/fido/link.lst  > $TMP/passtest
-CHE3=`$SEDT -n ""1"p" "$TMP"/passtest`
+grep "password\ ""$linkpassword""\ " INSTALLDIR/usr/etc/fido/link.lst  > "$TMP"/passtest
+CHE3=$($SEDT -n ""1"p" "$TMP"/passtest)
 if [ "$CHE3" = "" ];
 then
 echo
@@ -163,12 +163,12 @@ else
 echo "Seems 1 link has same password as you just entered."
 echo "Cannot add this password, exit."
 echo "Please run this script again and modify this password."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-grep "\ "$linkpassword"\ " INSTALLDIR/usr/etc/binkd.cfg  | grep "##" | grep " point " | $SEDT "s|##.*||g" | $SEDT "s/.*-//" | $SEDT "s/ //"  > $TMP/passtest1
-CHE4=`$SEDT -n ""1"p" $TMP/passtest1`
+grep "\ ""$linkpassword""\ " INSTALLDIR/usr/etc/binkd.cfg  | grep "##" | grep " point " | $SEDT "s|##.*||g" | $SEDT "s/.*-//" | $SEDT "s/ //"  > "$TMP"/passtest1
+CHE4=$($SEDT -n ""1"p" "$TMP"/passtest1)
 if [ "$CHE4" = "" ];
 then
 echo
@@ -176,7 +176,7 @@ else
 echo "Seems 1 point has same password as you just entered."
 echo "Cannot add this password, exit."
 echo "Please run this script again and modify this password."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -186,7 +186,7 @@ ARR2=(" ""$linkpassword"" ")
 
 echo
 echo  "=================================================="
-echo "Changing password "$GETPASSWORD" to "$linkpassword" in files:"
+echo "Changing password ""$GETPASSWORD"" to ""$linkpassword"" in files:"
 echo  "=================================================="
 
 echo "INSTALLDIR/usr/etc/binkd.cfg"
@@ -203,8 +203,8 @@ else
 echo "INSTALLDIR/usr/etc/fido/link.lst"
 $SEDT -i -E "s|${ARR1[*]}|${ARR2[*]}|g" INSTALLDIR/usr/etc/fido/link.lst
 fi
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
-rm -rf $TMP
+rm -rf "$TMP"
 
