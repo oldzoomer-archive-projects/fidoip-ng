@@ -828,6 +828,11 @@ chmod -R 755 "$HOMEDIR"/usr/etc/rc.d/binkdsrv
 chmod -R 755 "$HOMEDIR"/usr/etc/rc.d/bnkd.srv
 chmod -R 644 "$HOMEDIR"/usr/etc/rc.d/binkd.service
 
+echo
+echo  "========================================================"
+echo "Setting up nodelist in GoldED+: "
+echo  "========================================================"
+
 "$HOMEDIR"/usr/bin/nodelist.sh
 
 echo "========================================================"

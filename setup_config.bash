@@ -660,8 +660,6 @@ chmod 644 "$HOMEDIR"/usr/share/doc/fidoconf/*.html
 chmod 644 "$HOMEDIR"/usr/share/info/*.info
 chmod 644 "$HOMEDIR"/usr/share/man/man1/*.1
 
-"$HOMEDIR"/usr/bin/nodelist.sh
-
 set -e
 
 #echo "Generating welcome message"
@@ -678,6 +676,14 @@ export FIDOCONFIG=$HOMEDIR/usr/etc/fido/config
 #$HOMEDIR/usr/bin/txt2pkt -c $HOMEDIR/usr/etc/fido/config -nf "Developer of fidoip"  -xf "$ftnaddress"  -xt "$ftnaddress" -nt "$fullname" -t "Powered by fidoip package" -o "http://sourceforge.net/apps/mediawiki/fidoip" -s "Welcome, new point!" -e "welcome.fido" -d $HOMEDIR/fido/localinb /tmp/welcome.tpl
 
 "$HOMEDIR"/usr/bin/toss
+
+echo
+echo  "========================================================"
+echo "Setting up nodelist in GoldED+: "
+echo  "========================================================"
+
+"$HOMEDIR"/usr/bin/nodelist.sh
+
 echo
 echo "========================================================"
 echo "OK. Original configuration files modified successfully."
