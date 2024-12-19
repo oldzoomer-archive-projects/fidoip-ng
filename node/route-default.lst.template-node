@@ -1,4 +1,2 @@
-
+route hold no-route MYNODE-ADDRESS.*
 route crash FIRSTLINK-NODE-ADDRESS *
-
- 
