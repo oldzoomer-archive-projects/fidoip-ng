@@ -565,19 +565,17 @@ if [ "$reply" = "y" ];
 rm -f "$HOMEDIR"/usr/bin/recv
 rm -f "$HOMEDIR"/usr/bin/rs
 rm -f "$HOMEDIR"/usr/bin/send
+rm -f "$HOMEDIR"/usr/etc/fido/routing.lst
 rm -f "$HOMEDIR"/usr/etc/fido/link.lst
 rm -f "$HOMEDIR"/usr/etc/fido/point.lst
 rm -f "$HOMEDIR"/usr/etc/fido/readonly.lst
 rm -f "$HOMEDIR"/usr/etc/fido/routing.lst
-rm -f "$HOMEDIR"/usr/etc/fido/route-node.lst
-rm -f "$HOMEDIR"/usr/etc/fido/route-point.lst
-rm -f "$HOMEDIR"/usr/etc/fido/route-default.lst
-rm -f "$HOMEDIR"/usr/etc/golded+/golded.cfg
+rm -f  "$HOMEDIR"/usr/etc/golded+/golded.cfg
 rm -f "$HOMEDIR"/usr/etc/rc.d/binkd.service
 rm -f "$HOMEDIR"/usr/etc/rc.d/binkdsrv
 rm -f "$HOMEDIR"/usr/etc/rc.d/bnkd.srv
-rm -f "$HOMEDIR"/usr/etc/golded+/golded.cfg
-rm -rf "$HOMEDIR"/usr/etc/fidoip/node
+rm -f  "$HOMEDIR"/usr/etc/golded+/golded.cfg
+rm -rf  "$HOMEDIR"/usr/etc/fidoip/node
 
 mkdir -p "$HOMEDIR"/usr/etc/fidoip/node
 mkdir -p "$HOMEDIR"/usr/etc/rc.d
@@ -588,7 +586,6 @@ cp -p "$HOMEDIR"/usr/etc/fidoip/node/binkd.cfg.template-node "$HOMEDIR"/usr/etc/
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/config.template-node  "$HOMEDIR"/usr/etc/fido/config
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/link.lst.template-node  "$HOMEDIR"/usr/etc/fido/link.lst
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/route-default.lst.template-node  "$HOMEDIR"/usr/etc/fido/route-default.lst
-cp -p "$HOMEDIR"/usr/etc/fidoip/node/route-node.lst.template-node  "$HOMEDIR"/usr/etc/fido/route-node.lst
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/areas.lst.template-node "$HOMEDIR"/usr/etc/fido/areas.lst
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/fareas.lst.template-node "$HOMEDIR"/usr/etc/fido/fareas.lst
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/decode.txt.template-node "$HOMEDIR"/usr/etc/golded+/golded.cfg
@@ -642,8 +639,7 @@ $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/binkd.cfg
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/binkd.cfg
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/config
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/link.lst
-$SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-node.lst
-$SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-points.lst
+$SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/route-default.lst
 $SEDT -i "s/MYNODE-ADDRESS/""$ftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/areas.lst
 
 $SEDT -i "s/POINT-NUMBER/1/g" "$HOMEDIR"/usr/etc/fido/route-points.lst
@@ -686,6 +682,7 @@ $SEDT -i "s/MYPOINT-PASSWORD/""$point1password""/g" "$HOMEDIR"/usr/etc/fido/link
 
 $SEDT -i "s/FIRSTLINK-NODE-NAME/$uplinkname1/g" "$HOMEDIR"/usr/etc/fido/config
 $SEDT -i "s/FIRSTLINK-NODE-NAME/$uplinkname1/g" "$HOMEDIR"/usr/etc/fido/link.lst
+$SEDT -i "s/FIRSTLINK-NODE-NAME/$uplinkname1/g" "$HOMEDIR"/usr/etc/fido/route-default.lst
 
 $SEDT -i "s/FIRSTLINK-NODE-ADDRESS/""$uplinkftnaddress1""/g"  "$HOMEDIR"/usr/etc/binkd.cfg
 $SEDT -i "s/FIRSTLINK-NODE-ADDRESS/""$uplinkftnaddress1""/g" "$HOMEDIR"/usr/etc/fido/config

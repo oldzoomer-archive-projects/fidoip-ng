@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 # Shows list reandOnly 
-SYSOS=$(uname -s) # Packages architecture
-TMP=$(mktemp -d)	# Location of temp's files
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -28,20 +28,20 @@ echo "# Parsing of echo in INSTALLDIR/usr/etc/fido/config."
 echo  "#=================================================="
 echo
 
-INSTALLDIR/usr/bin/listecho | grep --binary-files=text -v "#" | $SEDT "s| -.*||g" | tr -d '\200-\377'  | $SEDT 's|".*||g' | $SEDT 's| -.*||g'  > "$TMP"/listecho.info.tmp
+INSTALLDIR/usr/bin/listecho | grep --binary-files=text -v "#" | $SEDT "s| -.*||g" | tr -d '\200-\377'  | $SEDT 's|".*||g' | $SEDT 's| -.*||g'  > $TMP/listecho.info.tmp
 
-NUMBER=$(cat "$TMP"/listecho.info.tmp | wc -l)
-ECHOINFO=$(cat "$TMP"/listecho.info.tmp)
+NUMBER=`cat $TMP/listecho.info.tmp | wc -l`
+ECHOINFO=`cat $TMP/listecho.info.tmp`
 
 declare -r AllowedChars="1234567890.-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 declare -r AllowedNumber="1234567890"
 
 
-if [ "$NUMBER" = "0" ];then
+if [ $NUMBER = "0" ];then
 echo  "#=================================================="
 echo "# No echos in INSTALLDIR/usr/etc/fido/config."
 echo  "#=================================================="
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
@@ -65,7 +65,7 @@ echo "# in config file INSTALLDIR/usr/etc/fido/readonly.lst:"
 echo  "#=================================================="
 cat INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" |  $SEDT  '/ReadOnly/!d' | sort 
 echo  "#=================================================="
-rm -f "$TMP"/listecho.info.tmp
+rm -f $TMP/listecho.info.tmp
 exit
 fi
 
@@ -84,14 +84,14 @@ echo -n '               '
 exit
 fi
 
-cat INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" | grep --binary-files=text "$echoname"  |  $SEDT  '/ReadOnly/!d' | sort  >  "$TMP"/echosel.info.tmp
+cat INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" | grep --binary-files=text "$echoname"  |  $SEDT  '/ReadOnly/!d' | sort  >  $TMP/echosel.info.tmp
 
-NUMBER1=$(cat "$TMP"/echosel.info.tmp | wc -l)
+NUMBER1=`cat $TMP/echosel.info.tmp | wc -l`
 i=1
 NUMBER1=$(($NUMBER1+1))
 while [ "$i" -ne "$NUMBER1" ]
 do
-echo " "$i" $($SEDT -n ""$i"p" "$TMP"/echosel.info.tmp)"
+echo " "$i" `$SEDT -n ""$i"p" $TMP/echosel.info.tmp`"
 i=$(($i+1))
 done
 
@@ -117,24 +117,24 @@ echo
 if [ "$answer" -lt "$NUMBER1" -a "$answer" -gt 0 ]; then
 echo  "=================================================="
 echo "You choosed:"
-echo " ""$answer"" $($SEDT -n """$answer""p" "$TMP"/echosel.info.tmp)"
-$SEDT -n """$answer""p" "$TMP"/echosel.info.tmp > "$TMP"/echo.tmp
-ECHONAME=$(cat "$TMP"/echo.tmp)
+echo " "$answer" `$SEDT -n ""$answer"p" $TMP/echosel.info.tmp`"
+$SEDT -n ""$answer"p" $TMP/echosel.info.tmp > $TMP/echo.tmp
+ECHONAME=`cat $TMP/echo.tmp`
 echo  "#================================================="
-echo "# Here is ReadOnly info regarging echo ""$ECHONAME"" "
+echo "# Here is ReadOnly info regarging echo "$ECHONAME" "
 echo "# in config file INSTALLDIR/usr/etc/fido/readonly.lst:"
 echo  "#=================================================="
 
-grep "$ECHONAME" INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" | sort  > "$TMP"/read.info.tmp
-NUM1=$(cat "$TMP"/echosel.info.tmp | wc -l)
+grep "$ECHONAME" INSTALLDIR/usr/etc/fido/readonly.lst | grep --binary-files=text -v "#" | sort  > $TMP/read.info.tmp
+NUM1=`cat $TMP/echosel.info.tmp | wc -l`
 
-if [ "$NUM1" = "0" ];then
+if [ $NUM1 = "0" ];then
 echo  "#=================================================="
-echo "# No ReadOnly found for ""$ECHONAME"""
+echo "# No ReadOnly found for "$ECHONAME""
 echo  "#=================================================="
 else
-cat "$TMP"/read.info.tmp
+cat $TMP/read.info.tmp
 fi
-rm -rf "$TMP"
+rm -rf $TMP
 fi
-rm -rf "$TMP"
+rm -rf $TMP

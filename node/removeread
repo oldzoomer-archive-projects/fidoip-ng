@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 #  Remove reandOnly for point
-SYSOS=$(uname -s) # Packages architecture
-TMP=$(mktemp -d)	# Location of temp's files
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -42,7 +42,7 @@ if [ -z "$ftnnumber" ]
 then
 echo 'To setup readonly you need input FTN number.'
 echo "You input nothing. Try to input next try. Exiting."
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
@@ -57,33 +57,33 @@ echo -n ""$AllowedFtn""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
-CHECKFTN=$(echo "$ftnnumber" | grep "/" )
+CHECKFTN=`echo "$ftnnumber" | grep "/" `
 if [ -z "$CHECKFTN" ]
 then
 echo 'To remove readonly you need input FTN number.'
 echo 'No symbol / in FTN number.'
 echo "Try to input next try. Exiting."
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
-CHECKFTN1=$(echo "$ftnnumber" | grep ":" )
+CHECKFTN1=`echo "$ftnnumber" | grep ":" `
 if [ -z "$CHECKFTN1" ]
 then
 echo 'To remove readonly you need input FTN number.'
 echo 'No symbol : in FTN number.'
 echo "Try to input next try. Exiting."
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
 # Inserting \ before . as dot alway brings problems with regexp
-echo  "$ftnnumber" | $SEDT 's|\.|\\\.|' > "$TMP"/fidoiptmp
-ftnnumber1=$(cat "$TMP"/fidoiptmp)
+echo  "$ftnnumber" | $SEDT 's|\.|\\\.|' > $TMP/fidoiptmp
+ftnnumber1=`cat $TMP/fidoiptmp`
 
 echo
 echo  "=================================================="
@@ -92,13 +92,13 @@ echo  "=================================================="
 echo
 
 ARR0=(" ""$ftnnumber1"" ")
-Z=$(INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Aka " | grep -e "${ARR0[*]}" )
+Z=`INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Aka " | grep -e "${ARR0[*]}" `
 if [ -z "$Z" ]
 then
 echo "No such link in configuration."
 M="1"
 else
-echo "Found link ""$ftnnumber""."
+echo "Found link "$ftnnumber"."
 fi
 
 echo
@@ -106,52 +106,52 @@ echo  "=================================================="
 echo "Checking if this point exist..."
 echo  "=================================================="
 echo
-Y=$(INSTALLDIR/usr/bin/viewpoint | grep -v "#" | grep "Aka " | grep -e "${ARR0[*]}" )
+Y=`INSTALLDIR/usr/bin/viewpoint | grep -v "#" | grep "Aka " | grep -e "${ARR0[*]}" `
 if [ -z "$Y" ]
 then
 echo "No such point."
 if [ "$M" = "1" ];then
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 else
-echo "Found point ""$ftnnumber""."
+echo "Found point "$ftnnumber"."
 fi
 
 echo
 echo  "=================================================="
-echo "Generationg list of readonly lists echoes for ""$ftnnumber""..."
+echo "Generationg list of readonly lists echoes for "$ftnnumber"..."
 echo  "=================================================="
 echo
 echo "Parsing of readonly in INSTALLDIR/usr/etc/fido/readonly.lst"
 echo
 
-grep "ReadOnly " INSTALLDIR/usr/etc/fido/readonly.lst | grep -v "#" | grep -e "${ARR0[*]}"   > "$TMP"/listechoread.info.tmp
+grep "ReadOnly " INSTALLDIR/usr/etc/fido/readonly.lst | grep -v "#" | grep -e "${ARR0[*]}"   > $TMP/listechoread.info.tmp
 
-ECHOINFO=$(cat "$TMP"/listechoread.info.tmp)
+ECHOINFO=`cat $TMP/listechoread.info.tmp`
 
-NUMBER=$(cat "$TMP"/listechoread.info.tmp | wc -l)
+NUMBER=`cat $TMP/listechoread.info.tmp | wc -l`
 
 
-if [ "$NUMBER" = "0" ];then
+if [ $NUMBER = "0" ];then
 echo
 echo  "=================================================="
-echo "No echos with readOnly for ""$ftnnumber"" in " 
+echo "No echos with readOnly for "$ftnnumber" in " 
 echo "INSTALLDIR/usr/etc/fido/readonly.lst"
 echo  "=================================================="
 echo
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
-cat "$TMP"/listechoread.info.tmp | grep -v "#"| sort  > "$TMP"/echoselread.info.tmp
+cat $TMP/listechoread.info.tmp | grep -v "#"| sort  > $TMP/echoselread.info.tmp
 
-NUMBER1=$(cat "$TMP"/echoselread.info.tmp | wc -l)
+NUMBER1=`cat $TMP/echoselread.info.tmp | wc -l`
 i=1
 NUMBER1=$(($NUMBER1+1))
 while [ "$i" -ne "$NUMBER1" ]
 do
-echo " "$i" $($SEDT -n ""$i"p" "$TMP"/echoselread.info.tmp)"
+echo " "$i" `$SEDT -n ""$i"p" $TMP/echoselread.info.tmp`"
 i=$(($i+1))
 done
 
@@ -169,7 +169,7 @@ echo -n ""$AllowedNumber""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
@@ -178,23 +178,23 @@ if [ "$answer" -lt "$NUMBER1" -a "$answer" -gt 0 ]; then
 echo  "=================================================="
 echo
 echo "You choosed:"
-echo " ""$answer"" $($SEDT -n """$answer""p" "$TMP"/echoselread.info.tmp)"
-$SEDT -n """$answer""p" "$TMP"/echoselread.info.tmp > "$TMP"/echoread.tmp
-ECHONAME=$(cat "$TMP"/echoread.tmp)
+echo " "$answer" `$SEDT -n ""$answer"p" $TMP/echoselread.info.tmp`"
+$SEDT -n ""$answer"p" $TMP/echoselread.info.tmp > $TMP/echoread.tmp
+ECHONAME=`cat $TMP/echoread.tmp`
 
-$SEDT -i "s|:|\\\:|" "$TMP"/echoread.tmp
-$SEDT -i "s|/|\\\/|" "$TMP"/echoread.tmp
+$SEDT -i "s|:|\\\:|" $TMP/echoread.tmp
+$SEDT -i "s|/|\\\/|" $TMP/echoread.tmp
 #$SEDT -i "s|.|\\\.|" $TMP/echoread.tmp
 
-ECHONAMEX=$(cat "$TMP"/echoread.tmp)
+ECHONAMEX=`cat $TMP/echoread.tmp`
 
 $SEDT -i "/$ECHONAMEX/d" INSTALLDIR/usr/etc/fido/readonly.lst
 
 echo
 echo  "=================================================="
-echo "readOnly for ""$ECHONAME"" removed."
+echo "readOnly for "$ECHONAME" removed."
 echo  "=================================================="
 echo
-rm -rf "$TMP"
+rm -rf $TMP
 fi
-rm -rf "$TMP"
+rm -rf $TMP
