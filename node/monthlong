@@ -3,7 +3,7 @@
 #   by the GNU general public license. See the file LICENSE for details. */
 #  Shows last day of month. Needs to install packages ncal or bcal for proper works
 SEDT="sed"  # Sed program type 
-NCAL=`find /  -name 'cal' -print  2>/dev/null`
+NCAL=$(find /  -name 'cal' -print  2>/dev/null)
 
 T1="root"
 T2="Linux"
@@ -28,7 +28,7 @@ exit
 fi
 
 # return number days in current month if cal exist
-DAYS=`cal | grep 31 | $SEDT "s|.*30 ||" | $SEDT "s| ||g"`
+DAYS=$(cal | grep 31 | $SEDT "s|.*30 ||" | $SEDT "s| ||g")
 
 if [ "31" = "$DAYS" ];
 then
@@ -36,21 +36,21 @@ echo "31"
 exit                                                                          
 fi 
 
-DAYS=`cal | grep 30 | $SEDT "s|.*29 ||" | $SEDT "s| ||g"`
+DAYS=$(cal | grep 30 | $SEDT "s|.*29 ||" | $SEDT "s| ||g")
 if [ "30" = "$DAYS" ];
 then
 echo "30"
 exit
 fi
                                                                               
-DAYS=`cal | grep 29 | $SEDT "s|.*28 ||" | $SEDT "s| ||g"`
+DAYS=$(cal | grep 29 | $SEDT "s|.*28 ||" | $SEDT "s| ||g")
 if [ "29" = "$DAYS" ];
 then
 echo "29"
 exit
 fi
 
-DAYS=`cal | grep 28 | $SEDT "s|.*27 ||" | $SEDT "s| ||g"`
+DAYS=$(cal | grep 28 | $SEDT "s|.*27 ||" | $SEDT "s| ||g")
 if [ "28" = "$DAYS" ];
 then
 echo "28"

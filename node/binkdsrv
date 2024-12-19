@@ -8,7 +8,7 @@ case "$1" in
   start)
 
     echo -n "Starting FTN mailer: binkd"
-    $DAEMON $OPTS
+    $DAEMON "$OPTS"
     echo "."
 
     ;;
@@ -23,9 +23,9 @@ case "$1" in
     echo "."
     ;;
   restart|force-reload)
-    sh $0 stop
+    sh "$0" stop
     sleep 1
-    sh $0 start
+    sh "$0" start
     ;;
   *)
     echo "Usage: INSTALLDIR/usr/sbin/binkd {start|stop|restart|reload|force-reload}"

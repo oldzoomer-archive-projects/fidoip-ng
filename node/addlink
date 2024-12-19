@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 # Add new link to INSTALLDIR/usr/etc/binkd.cfg and INSTALLDIR/usr/etc/fido/routing.lst route and additional links to INSTALLDIR/usr/etc/fido/link.lst
-SYSOS=`uname -s` # Packages architecture
-TMP=`mktemp -d`	# Location of temp's files
+SYSOS=$(uname -s) # Packages architecture
+TMP=$(mktemp -d)	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -29,9 +29,9 @@ declare -r AllowedNumbers="1234567890/.:"
 declare -r AllowedFtnNumbers="1234567890/:"
 declare -r Alloweddns="1234567890/.:-abcdefghijklmnopqrstuvwxyz"
 declare -r AllowedPwd="1234567890-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
-NODENUMBER1=`echo $NODENUMBER | $SEDT 's|/|\\\/|g'`
-station=`cat INSTALLDIR/usr/etc/binkd.cfg | grep sysname | $SEDT "s/sysname//g" | $SEDT 's|"||g' | $SEDT 's| ||g' `
+NODENUMBER=$(cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" )
+NODENUMBER1=$(echo "$NODENUMBER" | $SEDT 's|/|\\\/|g')
+station=$(cat INSTALLDIR/usr/etc/binkd.cfg | grep sysname | $SEDT "s/sysname//g" | $SEDT 's|"||g' | $SEDT 's| ||g' )
 
 INSTALLDIR/usr/bin/listlink
 echo  
@@ -46,7 +46,7 @@ if [ -z "$linkname" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -58,21 +58,21 @@ else
 echo ' '
 echo " Error. You entered wrong symbols. Allowed symbols are: "
 echo -n ' '
-echo -n ""$AllowedChars""
+echo -n """$AllowedChars"""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 # Inserting \ before space
-echo  "$linkname" | $SEDT 's/ /\\ /g' > $TMP/fidoiptmp
-linkname1=`cat $TMP/fidoiptmp`
+echo  "$linkname" | $SEDT 's/ /\\ /g' > "$TMP"/fidoiptmp
+linkname1=$(cat "$TMP"/fidoiptmp)
 
 ARR0=(" ""$linkname"" ")
-INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Link" | grep -e "${ARR0[*]}" > $TMP/testlink
-CHE0=`$SEDT -n ""1"p" "$TMP"/testlink`
+INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Link" | grep -e "${ARR0[*]}" > "$TMP"/testlink
+CHE0=$($SEDT -n ""1"p" "$TMP"/testlink)
 if [ "$CHE0" = "" ];
 then
 echo
@@ -81,12 +81,12 @@ echo "Seems 1 links already has same name."
 echo "Cannot add such name, exit."
 echo "Please run listpoint and listlink commands and check names."
 echo "Then start this script again and modify this name."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-INSTALLDIR/usr/bin/viewpoint | grep -v "#" | grep "Link" | grep -e "${ARR0[*]}" > $TMP/testlink1
-CHE1=`$SEDT -n ""1"p" "$TMP"/testlink1`
+INSTALLDIR/usr/bin/viewpoint | grep -v "#" | grep "Link" | grep -e "${ARR0[*]}" > "$TMP"/testlink1
+CHE1=$($SEDT -n ""1"p" "$TMP"/testlink1)
 if [ "$CHE1" = "" ];
 then
 echo
@@ -94,14 +94,14 @@ else
 echo "Seems 1 point already has same name."
 echo "Please run listpoint and listlink commands and check names."
 echo "Then start this script again and modify this name."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 
 # Changing all space to _ 
-echo  "$linkname" | $SEDT 's/ /\_/g' > $TMP/fidoiptmp
-linkname2=`cat $TMP/fidoiptmp`
+echo  "$linkname" | $SEDT 's/ /\_/g' > "$TMP"/fidoiptmp
+linkname2=$(cat "$TMP"/fidoiptmp)
 
 
 echo -e "Enter your link FTN address and press [ENTER]."
@@ -111,25 +111,25 @@ if [ -z "$linkftnaddress" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-CHECKFTN=`echo "$linkftnaddress" | grep "\\/" `
+CHECKFTN=$(echo "$linkftnaddress" | grep "\\/" )
 if [ -z "$CHECKFTN" ]
 then
 echo 'No symbol / in FTN number.'
 echo "Try to input next try. Exiting."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-CHECKFTN1=`echo "$linkftnaddress" | grep ":" `
+CHECKFTN1=$(echo "$linkftnaddress" | grep ":" )
 if [ -z "$CHECKFTN1" ]
 then
 echo 'No symbol : in FTN number.'
 echo "Try to input next try. Exiting."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -145,19 +145,19 @@ echo -n ""$AllowedFtnNumbers""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 # Inserting \ before /
-echo  "$linkftnaddress" | $SEDT 's|/|\\/|g' > $TMP/fidoiptmp
-linkftnaddress1=`cat $TMP/fidoiptmp`
+echo  "$linkftnaddress" | $SEDT 's|/|\\/|g' > "$TMP"/fidoiptmp
+linkftnaddress1=$(cat "$TMP"/fidoiptmp)
 
-SHORTNODENAME=`echo $linkftnaddress | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+SHORTNODENAME=$(echo "$linkftnaddress" | $SEDT 's|.*:||g' | $SEDT 's|/|-|g')
 
 ARR1=("\ ""$linkftnaddress1""\ ")
-INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Aka " | grep -e "${ARR1[*]}" > $TMP/testftn1
-CHE2=`$SEDT -n ""1"p" "$TMP"/testftn1`
+INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Aka " | grep -e "${ARR1[*]}" > "$TMP"/testftn1
+CHE2=$($SEDT -n ""1"p" "$TMP"/testftn1)
 cat "$TMP"/testftn1
 if [ "$CHE2" = "" ];
 then
@@ -167,7 +167,7 @@ echo "Seems 1 links already has same FTN address."
 echo "Cannot add such number, exit."
 echo "Please run listpoint and listlink commands and check FTN numbers."
 echo "Then start this script again and modify this address."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -178,7 +178,7 @@ if [ -z "$linkdnsaddress" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -196,7 +196,7 @@ echo -n ""$Alloweddns""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -210,7 +210,7 @@ if [ -z "$linkpassword" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -226,12 +226,12 @@ echo -n ""$AllowedPwd""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-grep "password\ "$linkpassword"\ " INSTALLDIR/usr/etc/fido/link.lst  > $TMP/testpass
-CHE3=`$SEDT -n ""1"p" "$TMP"/testpass`
+grep "password\ ""$linkpassword""\ " INSTALLDIR/usr/etc/fido/link.lst  > "$TMP"/testpass
+CHE3=$($SEDT -n ""1"p" "$TMP"/testpass)
 if [ "$CHE3" = "" ];
 then
 echo
@@ -240,12 +240,12 @@ echo "Seems 1 link has same password."
 echo "Cannot add this password, exit."
 echo "Please run listpoint and listlink commands and check passwords."
 echo "Then run this script again and modify this password."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-grep "\ "$linkpassword"\ " INSTALLDIR/usr/etc/binkd.cfg  | grep "##" | grep " point " | $SEDT "s|##.*||g" | $SEDT "s/.*-//" | $SEDT "s/ //"  > $TMP/testpass1
-CHE4=`$SEDT -n ""1"p" $TMP/testpass1`
+grep "\ ""$linkpassword""\ " INSTALLDIR/usr/etc/binkd.cfg  | grep "##" | grep " point " | $SEDT "s|##.*||g" | $SEDT "s/.*-//" | $SEDT "s/ //"  > "$TMP"/testpass1
+CHE4=$($SEDT -n ""1"p" "$TMP"/testpass1)
 if [ "$CHE4" = "" ];
 then
 echo
@@ -254,26 +254,26 @@ echo "Seems 1 point has same password."
 echo "Cannot add this password, exit."
 echo "Please run listpoint and listlink commands and check passwords."
 echo "Then start this script again and modify this password."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-cat INSTALLDIR/usr/etc/fidoip/node/link.lst.template > $TMP/link.lst.template-node
-cat INSTALLDIR/usr/etc/fidoip/node/routing.lst.template-node > $TMP/routing.lst.template-node 
-cat INSTALLDIR/usr/etc/fidoip/node/binklink.template-node > $TMP/binklink.template-node
-cat INSTALLDIR/usr/etc/fidoip/node/poll.template-node | grep binkd > $TMP/poll.template-node
-cat INSTALLDIR/usr/etc/fidoip/node/macro.cfg.template-node > $TMP/macro.cfg.template-node
-cp INSTALLDIR/usr/etc/fidoip/node/announce1.template-node $TMP/announce1.template-node
+cat INSTALLDIR/usr/etc/fidoip/node/link.lst.template > "$TMP"/link.lst.template-node
+cat INSTALLDIR/usr/etc/fidoip/node/routing.lst.template-node > "$TMP"/routing.lst.template-node 
+cat INSTALLDIR/usr/etc/fidoip/node/binklink.template-node > "$TMP"/binklink.template-node
+cat INSTALLDIR/usr/etc/fidoip/node/poll.template-node | grep binkd > "$TMP"/poll.template-node
+cat INSTALLDIR/usr/etc/fidoip/node/macro.cfg.template-node > "$TMP"/macro.cfg.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/announce1.template-node "$TMP"/announce1.template-node
 
 ARR2=("$linkname1")
-$SEDT -i -E "s/LINK-NODE-NAME/${ARR2[*]}/g" $TMP/link.lst.template-node
+$SEDT -i -E "s/LINK-NODE-NAME/${ARR2[*]}/g" "$TMP"/link.lst.template-node
 
 ARR3=("$linkftnaddress1")
-$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g" $TMP/link.lst.template-node
+$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g" "$TMP"/link.lst.template-node
 
 ARR31=("$linkftnaddress")
-cat INSTALLDIR/usr/etc/fido/route-default.lst  | grep "route crash"   > $TMP/test-route
-ROUT0=`cat $TMP/test-route | wc -l`
+cat INSTALLDIR/usr/etc/fido/route-default.lst  | grep "route crash"   > "$TMP"/test-route
+ROUT0=$(cat "$TMP"/test-route | wc -l)
 if [ "$ROUT0" = "0" ];
 then
 echo "Seems no any uplink for this system."
@@ -284,41 +284,41 @@ echo
 fi
 
 ARR4=("$NODENUMBER1")
-$SEDT -i -E "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/link.lst.template-node
+$SEDT -i -E "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/link.lst.template-node
 
 ARR5=("$linkpassword")
-$SEDT -i -E "s/LINK-NODE-PASSWORD/${ARR5[*]}/g" $TMP/link.lst.template-node
+$SEDT -i -E "s/LINK-NODE-PASSWORD/${ARR5[*]}/g" "$TMP"/link.lst.template-node
 
 ARR6=("$linkdnsaddress")
-$SEDT -i -E "s/LINK-HOST-DOMAIN-NAME/${ARR6[*]}/g" $TMP/binklink.template-node
+$SEDT -i -E "s/LINK-HOST-DOMAIN-NAME/${ARR6[*]}/g" "$TMP"/binklink.template-node
 
-$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g"  $TMP/binklink.template-node
-$SEDT -i -E "s/LINK-NODE-PASSWORD/${ARR5[*]}/g" $TMP/binklink.template-node
-$SEDT -i -E "s/LINK-NODE-NAME/${ARR2[*]}/g" $TMP/binklink.template-node
-$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g"  $TMP/routing.lst.template-node
-$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g" $TMP/poll.template-node
+$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g"  "$TMP"/binklink.template-node
+$SEDT -i -E "s/LINK-NODE-PASSWORD/${ARR5[*]}/g" "$TMP"/binklink.template-node
+$SEDT -i -E "s/LINK-NODE-NAME/${ARR2[*]}/g" "$TMP"/binklink.template-node
+$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g"  "$TMP"/routing.lst.template-node
+$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g" "$TMP"/poll.template-node
 
 ARR7=("$SHORTNODENAME")
-$SEDT -i -E "s/SHORTNODE-NAME/${ARR7[*]}/g" $TMP/macro.cfg.template-node
+$SEDT -i -E "s/SHORTNODE-NAME/${ARR7[*]}/g" "$TMP"/macro.cfg.template-node
 
-$SEDT -i -E "s/LINK-NODE-PASSWORD/${ARR5[*]}/g" $TMP/macro.cfg.template-node
-$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g" $TMP/macro.cfg.template-node
+$SEDT -i -E "s/LINK-NODE-PASSWORD/${ARR5[*]}/g" "$TMP"/macro.cfg.template-node
+$SEDT -i -E "s/LINK-NODE-ADDRESS/${ARR3[*]}/g" "$TMP"/macro.cfg.template-node
 
 
-cat $TMP/link.lst.template-node >> INSTALLDIR/usr/etc/fido/link.lst
-cat $TMP/routing.lst.template-node >> INSTALLDIR/usr/etc/fido/routing.lst
-cat $TMP/binklink.template-node >> INSTALLDIR/usr/etc/binkd.cfg
-cat $TMP/poll.template-node >> INSTALLDIR/usr/bin/poll
-cat $TMP/macro.cfg.template-node >> INSTALLDIR/usr/etc/golded+/macro.cfg
+cat "$TMP"/link.lst.template-node >> INSTALLDIR/usr/etc/fido/link.lst
+cat "$TMP"/routing.lst.template-node >> INSTALLDIR/usr/etc/fido/routing.lst
+cat "$TMP"/binklink.template-node >> INSTALLDIR/usr/etc/binkd.cfg
+cat "$TMP"/poll.template-node >> INSTALLDIR/usr/bin/poll
+cat "$TMP"/macro.cfg.template-node >> INSTALLDIR/usr/etc/golded+/macro.cfg
 
 ARR8=("$station")
 
-MYSHORTNODE=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
+MYSHORTNODE=$(echo "$NODENUMBER" | $SEDT 's|.*:||g' | $SEDT 's|/|-|g')
 
-$SEDT -i "s|LINK-FULL-NAME|${ARR2[*]}|g" $TMP/announce1.template-node
-$SEDT -i "s|LINK-ADDRESS|${ARR3[*]}|g" $TMP/announce1.template-node
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/announce1.template-node
-$SEDT -i "s|SYSTEM-NAME|${ARR8[*]}|g" $TMP/announce1.template-node
+$SEDT -i "s|LINK-FULL-NAME|${ARR2[*]}|g" "$TMP"/announce1.template-node
+$SEDT -i "s|LINK-ADDRESS|${ARR3[*]}|g" "$TMP"/announce1.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/announce1.template-node
+$SEDT -i "s|SYSTEM-NAME|${ARR8[*]}|g" "$TMP"/announce1.template-node
 
 echo  "=================================================="
 echo "Generating announce message"
@@ -326,13 +326,13 @@ echo  "=================================================="
 sleep 1
 echo
 export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config
-INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Link ""$linkftnaddress"" is created " -e ""$MYSHORTNODE".official" -d INSTALLDIR/fido/localinb $TMP/announce1.template-node
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER"  -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Link ""$linkftnaddress"" is created " -e """$MYSHORTNODE"".official" -d INSTALLDIR/fido/localinb "$TMP"/announce1.template-node
 
 
 INSTALLDIR/usr/bin/toss
 
 echo  "=================================================="
-echo "Link "$linkname" "$linkftnaddress" added to configuration files:"
+echo "Link ""$linkname"" ""$linkftnaddress"" added to configuration files:"
 echo  "=================================================="
 echo "INSTALLDIR/usr/etc/binkd.cfg"
 echo "INSTALLDIR/usr/etc/fido/link.lst"
@@ -341,5 +341,5 @@ echo "INSTALLDIR/usr/etc/golded+/macro.cfg"
 echo "INSTALLDIR/usr/bin/poll"
 echo  "=================================================="
 
-rm -rf $TMP
+rm -rf "$TMP"
 

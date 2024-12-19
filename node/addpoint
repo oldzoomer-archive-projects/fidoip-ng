@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 # add new point to /usr/etc/binkd.cfg and /usr/etc/fido/point.lst
-SYSOS=`uname -s` # Packages architecture
-TMP=`mktemp -d`	# Location of temp's files
+SYSOS=$(uname -s) # Packages architecture
+TMP=$(mktemp -d)	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -27,16 +27,16 @@ echo "This script add new POINT to fidoip's FIDONet node."
 echo  "=================================================="
 echo 
 sleep 1
-cat INSTALLDIR/usr/etc/binkd.cfg | grep " point " > $TMP/point.list.tmp
-cat $TMP/point.list.tmp | $SEDT "s|####.*||g" | $SEDT "s|##.*||g" |  grep -v "#"  | $SEDT "s/node//g" | $SEDT "s| - |     |g" >  $TMP/point.info.tmp
-POINTINFO=`cat $TMP/point.info.tmp`
-NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
-SYSOPNAME=`cat INSTALLDIR/usr/etc/binkd.cfg | grep "sysop " | $SEDT "s|sysop ||g" | $SEDT 's|"||g'`
-SYSOPNAME1=`echo $SYSOPNAME | $SEDT "s|_| |g" `
-NODENUMBER1=`echo $NODENUMBER | $SEDT 's|/|\\\/|g'`
-SHORTNODENAME=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
-NUMBER=`cat $TMP/point.info.tmp | wc -l`
-station=`cat INSTALLDIR/usr/etc/binkd.cfg | grep sysname | $SEDT "s/sysname//g" | $SEDT 's|"||g' | $SEDT 's| ||g' `
+cat INSTALLDIR/usr/etc/binkd.cfg | grep " point " > "$TMP"/point.list.tmp
+cat "$TMP"/point.list.tmp | $SEDT "s|####.*||g" | $SEDT "s|##.*||g" |  grep -v "#"  | $SEDT "s/node//g" | $SEDT "s| - |     |g" >  "$TMP"/point.info.tmp
+POINTINFO=$(cat "$TMP"/point.info.tmp)
+NODENUMBER=$(cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" )
+SYSOPNAME=$(cat INSTALLDIR/usr/etc/binkd.cfg | grep "sysop " | $SEDT "s|sysop ||g" | $SEDT 's|"||g')
+SYSOPNAME1=$(echo "$SYSOPNAME" | $SEDT "s|_| |g" )
+NODENUMBER1=$(echo "$NODENUMBER" | $SEDT 's|/|\\\/|g')
+SHORTNODENAME=$(echo "$NODENUMBER" | $SEDT 's|.*:||g' | $SEDT 's|/|-|g')
+NUMBER=$(cat "$TMP"/point.info.tmp | wc -l)
+station=$(cat INSTALLDIR/usr/etc/binkd.cfg | grep sysname | $SEDT "s/sysname//g" | $SEDT 's|"||g' | $SEDT 's| ||g' )
 
 echo
 INSTALLDIR/usr/bin/listpoint 
@@ -45,7 +45,7 @@ echo  "=================================================="
 echo "Here is mailer informaion regarging existed points"
 echo "in configuration file INSTALLDIR/usr/etc/binkd.cfg:"
 echo "Point number:     Password for session:"
-cat $TMP/point.info.tmp
+cat "$TMP"/point.info.tmp
 echo "=================================================="
 echo
 
@@ -62,7 +62,7 @@ if [ -z "$fullname" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -74,23 +74,23 @@ else
 echo
 echo " Error. You entered wrong symbols. Allowed symbols are: "
 echo -n ' '
-echo -n ""$AllowedChars""
+echo -n """$AllowedChars"""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 
 
 # Inserting \ before space
-echo  "$fullname" | $SEDT 's/ /\\ /g' > $TMP/fidoiptmp
-fullname1=`cat $TMP/fidoiptmp`
+echo  "$fullname" | $SEDT 's/ /\\ /g' > "$TMP"/fidoiptmp
+fullname1=$(cat "$TMP"/fidoiptmp)
 
 ARR0=(" ""$fullname"" ")
-INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Link" | grep -e "${ARR0[*]}" > $TMP/testlink
-CHE0=`$SEDT -n ""1"p" "$TMP"/testlink`
+INSTALLDIR/usr/bin/listlink  | grep -v "#" | grep "Link" | grep -e "${ARR0[*]}" > "$TMP"/testlink
+CHE0=$($SEDT -n ""1"p" "$TMP"/testlink)
 if [ "$CHE0" = "" ];
 then
 echo
@@ -99,12 +99,12 @@ echo "Seems 1 links already has same name."
 echo "Cannot add such name, exit."
 echo "Please run listpoint and listlink commands and check names."
 echo "Then start this script again and modify this name."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-INSTALLDIR/usr/bin/viewpoint | grep -v "#" | grep "Link" | grep "${ARR0[*]}" > $TMP/testlink1
-CHE1=`$SEDT -n ""1"p" "$TMP"/testlink1`
+INSTALLDIR/usr/bin/viewpoint | grep -v "#" | grep "Link" | grep "${ARR0[*]}" > "$TMP"/testlink1
+CHE1=$($SEDT -n ""1"p" "$TMP"/testlink1)
 if [ "$CHE1" = "" ];
 then
 echo
@@ -113,15 +113,15 @@ echo "Seems 1 point already has same name."
 echo "Cannot add such name, exit."
 echo "Please run listpoint and listlink and check names."
 echo "Then start this script again and modify this name."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 
 # Inserting _ instead of space
 
-echo  "$fullname" | $SEDT 's/ /\_/g' > $TMP/fidoiptmp
-fullname2=`cat $TMP/fidoiptmp`
+echo  "$fullname" | $SEDT 's/ /\_/g' > "$TMP"/fidoiptmp
+fullname2=$(cat "$TMP"/fidoiptmp)
 
 
 echo -e "Enter new and free POINT number and press [ENTER]."
@@ -131,7 +131,7 @@ if [ -z "$pointaddress" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -147,7 +147,7 @@ echo -n ""$AllowedNumbers""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -155,13 +155,13 @@ if [ "1" = "$pointaddress" ]; then
 echo " Error. You entered existed number."
 echo 'Please run this script again and select other point number.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 else
 echo
 fi
 
-existp=`INSTALLDIR/usr/bin/listpoint | grep "\."$pointaddress"\ " `
+existp=$(INSTALLDIR/usr/bin/listpoint | grep "\.""$pointaddress""\ " )
 
 if [ -z "$existp" ]; then
 echo
@@ -171,7 +171,7 @@ echo " Error. You entered existed point number."
 echo "Please run listpoint and listlink commands and check user point numbers."
 echo 'Then run this script again and select other point number.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -183,7 +183,7 @@ if [ -z "$point1password" ]
 then
 echo 'You input nothing.'
 echo 'Please run this script again and input something.'
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -199,12 +199,12 @@ echo -n ""$AllowedPwd""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-grep "\ "$point1password"\ " INSTALLDIR/usr/etc/binkd.cfg  | grep "##" | grep " point " | $SEDT "s|##.*||g" | $SEDT "s/.*-//" | $SEDT "s/ //"  > $TMP/testpass
-CHE2=`$SEDT -n ""1"p" $TMP/testpass`
+grep "\ ""$point1password""\ " INSTALLDIR/usr/etc/binkd.cfg  | grep "##" | grep " point " | $SEDT "s|##.*||g" | $SEDT "s/.*-//" | $SEDT "s/ //"  > "$TMP"/testpass
+CHE2=$($SEDT -n ""1"p" "$TMP"/testpass)
 if [ "$CHE2" = "" ];
 then
 echo
@@ -213,12 +213,12 @@ echo "Seems 1 point has same password."
 echo "Cannot add this password, exit."
 echo "Please run listpoint and listlink commands and check passwords."
 echo "Then run this script again and modify this password."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
-grep "password\ "$point1password"\ " INSTALLDIR/usr/etc/fido/link.lst  > $TMP/testpass2
-CHE3=`$SEDT -n ""1"p" "$TMP"/testpass2`
+grep "password\ ""$point1password""\ " INSTALLDIR/usr/etc/fido/link.lst  > "$TMP"/testpass2
+CHE3=$($SEDT -n ""1"p" "$TMP"/testpass2)
 if [ "$CHE3" = "" ];
 then
 echo
@@ -227,7 +227,7 @@ echo "Seems 1 link has same password."
 echo "Cannot add this password, exit."
 echo "Please run listpoint and listlink commands and check passwords."
 echo "Please run this script again and modify this password."
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
@@ -247,17 +247,17 @@ else
 echo ' '
 echo " Error. You entered wrong symbols. Allowed symbols are: "
 echo -n ' '
-echo -n ""$AllowedChars""
+echo -n """$AllowedChars"""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 # Inserting _ instead space
-echo  "$stationname" | $SEDT 's/ /\_/g' > $TMP/fidoiptmp
-stationname1=`cat $TMP/fidoiptmp`
+echo  "$stationname" | $SEDT 's/ /\_/g' > "$TMP"/fidoiptmp
+stationname1=$(cat "$TMP"/fidoiptmp)
 
 
 echo "Enter POINT location and press[ENTER](optional)."
@@ -276,31 +276,31 @@ else
 echo
 echo " Error. You entered wrong symbols. Allowed symbols are: "
 echo -n ' '
-echo -n ""$AllowedChars""
+echo -n """$AllowedChars"""
 echo -n '               '
 echo 'Please run this script again and be more carefull during inputing.'
 echo -n '               '
-rm -rf $TMP
+rm -rf "$TMP"
 exit
 fi
 
 # Inserting _ instead space
-echo  "$locationname" | $SEDT 's/ /\_/g' > $TMP/fidoiptmp
-locationname1=`cat $TMP/fidoiptmp`
+echo  "$locationname" | $SEDT 's/ /\_/g' > "$TMP"/fidoiptmp
+locationname1=$(cat "$TMP"/fidoiptmp)
 
 # Inserting space instead -
-echo  "$locationname1" | $SEDT 's/_/\ /g' > $TMP/fidoiptmp
-locationname2=`cat $TMP/fidoiptmp`
+echo  "$locationname1" | $SEDT 's/_/\ /g' > "$TMP"/fidoiptmp
+locationname2=$(cat "$TMP"/fidoiptmp)
 
 # Deleting spaces
 
 
-echo  "$locationname" | $SEDT 's/\ //g' > $TMP/fidoiptmp
-locationname3=`cat $TMP/fidoiptmp`
+echo  "$locationname" | $SEDT 's/\ //g' > "$TMP"/fidoiptmp
+locationname3=$(cat "$TMP"/fidoiptmp)
 
 # Deleting ,
-echo  "$locationname3" | $SEDT 's/\,//g' > $TMP/fidoiptmp
-locationname4=`cat $TMP/fidoiptmp`
+echo  "$locationname3" | $SEDT 's/\,//g' > "$TMP"/fidoiptmp
+locationname4=$(cat "$TMP"/fidoiptmp)
 
 
 echo
@@ -308,15 +308,15 @@ echo  "=================================================="
 echo
 
 echo -n "New POINT Full Name : "
-echo $fullname
+echo "$fullname"
 echo -n "New POINT Address : "
-echo $NODENUMBER.$pointaddress
+echo "$NODENUMBER"."$pointaddress"
 echo -n "New POINT password is : "
-echo $point1password
+echo "$point1password"
 echo -n "New POINT station name is(optional) : "
-echo $stationname
+echo "$stationname"
 echo -n "New POINT location is(optional) : "
-echo $locationname
+echo "$locationname"
 
 echo 
 echo  "=================================================="
@@ -329,93 +329,93 @@ echo ""
 if [ "$reply" = "y" ];
 	then 
 
-cp INSTALLDIR/usr/etc/fidoip/node/binkpoint.template-node $TMP/binkpoint.template-node
-cp INSTALLDIR/usr/etc/fidoip/node/point.lst.template-node $TMP/point.lst.template-node
-cp INSTALLDIR/usr/etc/fidoip/node/readonly-point.lst.template-node $TMP/readonly-point.lst.template-node
-cp INSTALLDIR/usr/etc/fidoip/node/test.template-node $TMP/test.template-node
-cp INSTALLDIR/usr/etc/fidoip/node/announce.template-node $TMP/announce.template-node
-cp INSTALLDIR/usr/etc/fidoip/node/welcome1.template-node $TMP/welcome1.template-node
-cp INSTALLDIR/usr/etc/fidoip/node/welcome.template-node $TMP/welcome.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/binkpoint.template-node "$TMP"/binkpoint.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/point.lst.template-node "$TMP"/point.lst.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/readonly-point.lst.template-node "$TMP"/readonly-point.lst.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/test.template-node "$TMP"/test.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/announce.template-node "$TMP"/announce.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/welcome1.template-node "$TMP"/welcome1.template-node
+cp INSTALLDIR/usr/etc/fidoip/node/welcome.template-node "$TMP"/welcome.template-node
 
-pointname=`echo "$fullname" | $SEDT "s| .*||g"`
+pointname=$(echo "$fullname" | $SEDT "s| .*||g")
 
 ARR1=("$fullname1")
-$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" $TMP/binkpoint.template-node
+$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" "$TMP"/binkpoint.template-node
 ARR2=("$pointname")
-$SEDT -i "s|POINT-NAME|${ARR2[*]}|g" $TMP/test.template-node
-$SEDT -i "s|POINT-NAME|${ARR2[*]}|g" $TMP/welcome1.template-node
-$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" $TMP/welcome.template-node
-$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" $TMP/announce.template-node
+$SEDT -i "s|POINT-NAME|${ARR2[*]}|g" "$TMP"/test.template-node
+$SEDT -i "s|POINT-NAME|${ARR2[*]}|g" "$TMP"/welcome1.template-node
+$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" "$TMP"/welcome.template-node
+$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" "$TMP"/announce.template-node
 ARR3=("$SYSOPNAME1")
-$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" $TMP/test.template-node
-$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" $TMP/welcome1.template-node
-$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" $TMP/welcome.template-node
-$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" $TMP/announce.template-node
+$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" "$TMP"/test.template-node
+$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" "$TMP"/welcome1.template-node
+$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" "$TMP"/welcome.template-node
+$SEDT -i "s|SYSTEM-OPERATOR-NAME|${ARR3[*]}|g" "$TMP"/announce.template-node
 ARR4=("$NODENUMBER")
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/test.template-node
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/welcome1.template-node
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/welcome.template-node
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/announce.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/test.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/welcome1.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/welcome.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/announce.template-node
 ARR5=("$station")
-$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" $TMP/test.template-node
-$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" $TMP/welcome1.template-node
-$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" $TMP/welcome.template-node
-$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" $TMP/announce.template-node
+$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" "$TMP"/test.template-node
+$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" "$TMP"/welcome1.template-node
+$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" "$TMP"/welcome.template-node
+$SEDT -i "s|SYSTEM-NAME|${ARR5[*]}|g" "$TMP"/announce.template-node
 ARR6=("$pointaddress")
-$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" $TMP/welcome.template-node
-$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" $TMP/announce.template-node
+$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" "$TMP"/welcome.template-node
+$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" "$TMP"/announce.template-node
 ARR7=("$SHORTNODENAME")
-$SEDT -i "s|ECHO-TEST-NAME-LOCAL|${ARR7[*]}.test|g" $TMP/test.template-node
+$SEDT -i "s|ECHO-TEST-NAME-LOCAL|${ARR7[*]}.test|g" "$TMP"/test.template-node
 ARR8=("$locationname4")
-$SEDT -i "s|POINT-LOCATION|${ARR8[*]}|g" $TMP/binkpoint.template-node
+$SEDT -i "s|POINT-LOCATION|${ARR8[*]}|g" "$TMP"/binkpoint.template-node
 ARR9=("$stationname1")
-$SEDT -i "s|POINT-STATION-NAME|${ARR9[*]}|g" $TMP/binkpoint.template-node
-$SEDT -i "s|POINT-STATION-NAME|${ARR9[*]}|g" $TMP/binkpoint.template-node
-$SEDT -i "s|POINT-STATION-NAME|${ARR9[*]}|g" $TMP/announce.template-node
+$SEDT -i "s|POINT-STATION-NAME|${ARR9[*]}|g" "$TMP"/binkpoint.template-node
+$SEDT -i "s|POINT-STATION-NAME|${ARR9[*]}|g" "$TMP"/binkpoint.template-node
+$SEDT -i "s|POINT-STATION-NAME|${ARR9[*]}|g" "$TMP"/announce.template-node
 
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/binkpoint.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/binkpoint.template-node
 
-$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" $TMP/binkpoint.template-node
+$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" "$TMP"/binkpoint.template-node
 
 ARR10=("$point1password")
-$SEDT -i "s|POINT-PASSWORD|${ARR10[*]}|g" $TMP/binkpoint.template-node
+$SEDT -i "s|POINT-PASSWORD|${ARR10[*]}|g" "$TMP"/binkpoint.template-node
 
-$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" $TMP/point.lst.template-node
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/point.lst.template-node
-$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" $TMP/readonly-point.lst.template-node
-$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" $TMP/point.lst.template-node
-$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" $TMP/readonly-point.lst.template-node
-$SEDT -i "s|SHORTNODE-NAME|${ARR7[*]}|g" $TMP/readonly-point.lst.template-node
-$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" $TMP/binkpoint.template-node
-$SEDT -i "s|POINT-PASSWORD|${ARR10[*]}|g" $TMP/point.lst.template-node
+$SEDT -i "s|POINT-FULL-NAME|${ARR1[*]}|g" "$TMP"/point.lst.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/point.lst.template-node
+$SEDT -i "s|MYNODE-ADDRESS|${ARR4[*]}|g" "$TMP"/readonly-point.lst.template-node
+$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" "$TMP"/point.lst.template-node
+$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" "$TMP"/readonly-point.lst.template-node
+$SEDT -i "s|SHORTNODE-NAME|${ARR7[*]}|g" "$TMP"/readonly-point.lst.template-node
+$SEDT -i "s|POINT-NUMBER|${ARR6[*]}|g" "$TMP"/binkpoint.template-node
+$SEDT -i "s|POINT-PASSWORD|${ARR10[*]}|g" "$TMP"/point.lst.template-node
 
 ARR11=("$NODENUMBER1")
 $SEDT -i "s| ${ARR11[*]} ${ARR11[*]}.1 | ${ARR11[*]} ${ARR11[*]}.1 ${ARR11[*]}.${ARR6[*]} |g" INSTALLDIR/usr/etc/fido/config
 
-cat $TMP/binkpoint.template-node >> INSTALLDIR/usr/etc/binkd.cfg
-cat $TMP/point.lst.template-node >> INSTALLDIR/usr/etc/fido/point.lst
-cat $TMP/readonly-point.lst.template-node >> INSTALLDIR/usr/etc/fido/readonly.lst
+cat "$TMP"/binkpoint.template-node >> INSTALLDIR/usr/etc/binkd.cfg
+cat "$TMP"/point.lst.template-node >> INSTALLDIR/usr/etc/fido/point.lst
+cat "$TMP"/readonly-point.lst.template-node >> INSTALLDIR/usr/etc/fido/readonly.lst
 
 echo
 echo  "=================================================="
 echo "Generating welcome, announce and test messages for new"
-echo "point "${ARR4[*]}"."${ARR6[*]}""
+echo "point ""${ARR4[*]}"".""${ARR6[*]}"""
 echo  "=================================================="
 echo
 export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config
-INSTALLDIR/usr/bin/txt2pkt -nf "$SYSOPNAME1" -xf "$NODENUMBER"  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "New point ""$NODENUMBER""."$pointaddress"" -e ""$SHORTNODENAME".local" -d INSTALLDIR/fido/localinb $TMP/welcome.template-node
+INSTALLDIR/usr/bin/txt2pkt -nf "$SYSOPNAME1" -xf "$NODENUMBER"  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "New point ""$NODENUMBER"".""$pointaddress""" -e """$SHORTNODENAME"".local" -d INSTALLDIR/fido/localinb "$TMP"/welcome.template-node
 
-INSTALLDIR/usr/bin/txt2pkt -nf "$SYSOPNAME1" -xf "$NODENUMBER"  -xt "$NODENUMBER" -nt "$fullname" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip"  -s "Test message" -e ""$SHORTNODENAME".test" -d INSTALLDIR/fido/localinb $TMP/test.template-node
+INSTALLDIR/usr/bin/txt2pkt -nf "$SYSOPNAME1" -xf "$NODENUMBER"  -xt "$NODENUMBER" -nt "$fullname" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip"  -s "Test message" -e """$SHORTNODENAME"".test" -d INSTALLDIR/fido/localinb "$TMP"/test.template-node
 
-INSTALLDIR/usr/bin/txt2pkt -nf "$SYSOPNAME1" -xf "$NODENUMBER"  -xt "$NODENUMBER" -nt "$fullname" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Welcome!!!" -e ""$SHORTNODENAME".local" -d INSTALLDIR/fido/localinb $TMP/welcome1.template-node
+INSTALLDIR/usr/bin/txt2pkt -nf "$SYSOPNAME1" -xf "$NODENUMBER"  -xt "$NODENUMBER" -nt "$fullname" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Welcome!!!" -e """$SHORTNODENAME"".local" -d INSTALLDIR/fido/localinb "$TMP"/welcome1.template-node
 
-INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Added New point ""$NODENUMBER""."$pointaddress"" -e ""$SHORTNODENAME".official" -d INSTALLDIR/fido/localinb $TMP/announce.template-node
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Added New point ""$NODENUMBER"".""$pointaddress""" -e """$SHORTNODENAME"".official" -d INSTALLDIR/fido/localinb "$TMP"/announce.template-node
 
 INSTALLDIR/usr/bin/toss
 
 echo 
 echo  "=================================================="
-echo "Point "$NODENUMBER".$pointaddress added to configuration files:"
+echo "Point ""$NODENUMBER"".$pointaddress added to configuration files:"
 echo  "=================================================="
 echo "INSTALLDIR/usr/etc/binkd.cfg"
 echo "INSTALLDIR/usr/etc/fido/config"
@@ -423,11 +423,11 @@ echo "INSTALLDIR/usr/etc/fido/point.lst"
 echo "INSTALLDIR/usr/etc/fido/readonly.lst"
 echo  "=================================================="
 
-rm -rf $TMP
+rm -rf "$TMP"
 
 elif [ "$reply" = "n" ];
 	then 
 echo "Please modify configuration files manually or run this script again."
-rm -rf $TMP
+rm -rf "$TMP"
 fi
 
