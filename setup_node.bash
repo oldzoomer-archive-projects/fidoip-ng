@@ -597,7 +597,6 @@ cp -p "$HOMEDIR"/usr/etc/fidoip/node/toss "$HOMEDIR"/usr/bin/toss
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/readonly.lst.template-node "$HOMEDIR"/usr/etc/fido/readonly.lst
 cp -p "$HOMEDIR"/usr/etc/fidoip/node/macro.cfg.template-node "$HOMEDIR"/usr/etc/golded+/macro.cfg
 
-touch "$HOMEDIR"/usr/etc/fido/route-points.lst
 touch "$HOMEDIR"/usr/etc/fido/routing.lst
 touch "$HOMEDIR"/usr/etc/fido/point.lst
 cp "$HOMEDIR"/usr/etc/fidoip/node/areafix.template-node "$HOMEDIR"/fido/areafix.hlp
