@@ -124,7 +124,7 @@ mkdir -p "$PKG"/fido
 mkdir -p "$PKG"/fido/nodelist
 cp "$CWD"/nodelist.txt "$PKG"/fido/nodelist/
 cp "$CWD"/goldnode.* "$PKG"/fido/nodelist/
-cat "$CWD"/nodelist.sh | sed "s|INSTALLDIR/usr|$HOMEDIR/usr|g" > "$PKG"/usr/bin/nodelist.sh
+cat "$CWD"/nodelist.sh | sed "s|INSTALLDIR|$HOMEDIR|g" > "$PKG"/usr/bin/nodelist.sh
 chmod +x "$PKG"/usr/bin/nodelist.sh
 cp "$CWD"/*.eng "$PKG"/usr/etc/fidoip/
 cat "$CWD"/golded.tpl > "$PKG"/usr/etc/fidoip/golded.tpl
