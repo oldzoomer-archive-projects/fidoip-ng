@@ -107,10 +107,14 @@ include INSTALLDIR/usr/etc/fido/link.lst
 # для внесения изменений используйте команды addpoint и removepoint
 include INSTALLDIR/usr/etc/fido/point.lst
 
+# Отключение роутинга в пределах этого узла
+route hold no-route MYNODE-ADDRESS.*
+
 # Роутинг для дополнительных линков
 # Не редактируйте этот файл руками
 # для внесения изменений используйте команды addlink и removelink
 include INSTALLDIR/usr/etc/fido/routing.lst
+
 # Дефолтный роутинг
 include INSTALLDIR/usr/etc/fido/route-default.lst
 
