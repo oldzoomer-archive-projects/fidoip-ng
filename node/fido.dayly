@@ -5,12 +5,12 @@
 # Run this script dayly by cron at 23:55 each day
 # Install these packages before: lshw hwinfo net-tools iputils-ping
 # or install other prorgams which mentioned below and uncomment raws with this programs.
-SYSOS=$(uname -s) # Packages architecture
-TMP=$(mktemp -d)	# Location of temp's files 
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files 
 SEDT="sed"  # Sed program type
-IFCONFIG=$(find / -type f -perm 755 -name 'ifconfig' -print  2>/dev/null)
-HWINFO=$(find / -type f -perm 755 -name 'hwinfo' -print  2>/dev/null)
-LSHW=$(find / -type f -perm 755 -name 'lshw' -print  2>/dev/null)
+IFCONFIG=`find / -type f -perm 755 -name 'ifconfig' -print  2>/dev/null`
+HWINFO=`find / -type f -perm 755 -name 'hwinfo' -print  2>/dev/null`
+LSHW=`find / -type f -perm 755 -name 'lshw' -print  2>/dev/null`
 
 if [ -e "$IFCONFIG" ]; then
 echo
@@ -71,13 +71,13 @@ echo "FIDO node configuration doesnt't exist. "
 echo "To create run setup_node.bash first."
 echo  "=================================================="
 sleep 1
-rm -rf "$TMP"
+rm -rf $TMP
 exit
 fi
 
-NODENUMBER=$(cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" )
-NODENUMBER1=$(echo "$NODENUMBER" | $SEDT 's|/|\\\/|g')
-SHORTNODENAME=$(echo "$NODENUMBER" | $SEDT 's|.*:||g' | $SEDT 's|/|-|g')
+NODENUMBER=`cat INSTALLDIR/usr/etc/binkd.cfg | grep node | grep ".1 - " | $SEDT "s| -.*||g" | $SEDT "s|node ||g" | $SEDT "s|\\..*||g" `
+NODENUMBER1=`echo $NODENUMBER | $SEDT 's|/|\\\/|g'`
+SHORTNODENAME=`echo $NODENUMBER | $SEDT 's|.*:||g' | $SEDT 's|/|-|g'`
 
 INSTALLDIR/usr/bin/binkdstat.pl -d1 >  INSTALLDIR/fido/binkd-dayly.rpt
 INSTALLDIR/usr/bin/hptlogstat.pl 1 -traffic > INSTALLDIR/fido/hpt-dayly.rpt
@@ -157,24 +157,24 @@ echo "##########################################################################
 #dmidecode -t bios | grep -v dmidecode | grep -v SMBIOS | grep -v Handle >> INSTALLDIR/fido/system-dayly.rpt 
 #dmidecode -t memory | grep -v dmidecode | grep -v SMBIOS | grep -v Handle >> INSTALLDIR/fido/system-dayly.rpt 
 
-ICONV=$(which iconv)
+ICONV=`which iconv`
 if [ -x "$ICONV" ];then 
 iconv -t ibm866 INSTALLDIR/fido/system-dayly.rpt > INSTALLDIR/fido/system-dayly.rpt.tmp
 cat INSTALLDIR/fido/system-dayly.rpt.tmp > INSTALLDIR/fido/system-dayly.rpt  
 fi
 echo  "=================================================="
 echo "Generating dayly statistics of binkd, hpt, htick and system"
-echo "and post it to ""$SHORTNODENAME"".robots."
+echo "and post it to "$SHORTNODENAME".robots."
 echo  "=================================================="
 
 export FIDOCONFIG=INSTALLDIR/usr/etc/fido/config 
-INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Mailer statistic for node ""$NODENUMBER""(dayly script job)" -e """$SHORTNODENAME"".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/binkd-dayly.rpt
-INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Tosser statistic for node ""$NODENUMBER""(dayly script job)" -e """$SHORTNODENAME"".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/hpt-dayly.rpt
-INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Files statistic for node ""$NODENUMBER""(dayly script job)" -e """$SHORTNODENAME"".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/htick-dayly.rpt
-INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "System statistic for node ""$NODENUMBER""(dayly script job)" -e """$SHORTNODENAME"".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/system-dayly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Mailer statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/binkd-dayly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Tosser statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/hpt-dayly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "Files statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/htick-dayly.rpt
+INSTALLDIR/usr/bin/txt2pkt -nf "Dumb-robot" -xf "$NODENUMBER".1  -xt "$NODENUMBER" -t "Powered by automatic fidoip NMS(Node Management System)" -o "https://sf.net/projects/fidoip" -s "System statistic for node "$NODENUMBER"(dayly script job)" -e ""$SHORTNODENAME".robots" -d INSTALLDIR/fido/localinb INSTALLDIR/fido/system-dayly.rpt
 
 INSTALLDIR/usr/bin/toss
 
-rm -rf "$TMP"
+rm -rf $TMP
 
 

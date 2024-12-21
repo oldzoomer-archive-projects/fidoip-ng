@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 #  Shows point's database and details info regarding tosser config information for selected point 
-SYSOS=$(uname -s) # Packages architecture
-TMP=$(mktemp -d)	# Location of temp's files
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -23,11 +23,11 @@ SEDT="gsed"
 fi
 
 
-cat INSTALLDIR/usr/etc/binkd.cfg | grep "##" | grep " point " > "$TMP"/point.list.tmp
-cat "$TMP"/point.list.tmp | $SEDT "s|point.*||g" | $SEDT "s/node//g" | $SEDT "s| - | |g" | $SEDT "s|##||g" >  "$TMP"/point.info.tmp
-POINTINFO=$(cat "$TMP"/point.info.tmp)
+cat INSTALLDIR/usr/etc/binkd.cfg | grep "##" | grep " point " > $TMP/point.list.tmp
+cat $TMP/point.list.tmp | $SEDT "s|point.*||g" | $SEDT "s/node//g" | $SEDT "s| - | |g" | $SEDT "s|##||g" >  $TMP/point.info.tmp
+POINTINFO=`cat $TMP/point.info.tmp`
 
-NUMBER=$(cat "$TMP"/point.info.tmp | wc -l)
+NUMBER=`cat $TMP/point.info.tmp | wc -l`
 
 echo  "#=================================================="
 echo "# $NUMBER point found in INSTALLDIR/usr/etc/binkd.cfg"
@@ -37,7 +37,7 @@ echo "# INSTALLDIR/usr/etc/binkd.cfg:"
 echo "# Point number:     Password:   Description:"
 echo  "#=================================================="
 cat INSTALLDIR/usr/etc/binkd.cfg | grep "##" | grep " point " |  $SEDT "s|##||g" | $SEDT "s|  | |g" | $SEDT "s| point .*||g" |   grep -v "#"  | $SEDT "s/node//g" | $SEDT "s| - |   |g" 
-POINTNUMBER=$(echo "$POINTINFO" | $SEDT "s| .*||g" ) 
+POINTNUMBER=`echo $POINTINFO | $SEDT "s| .*||g" ` 
 echo  "#================================================="
 echo "# Tosser info of points (except .1) in configuration files:"
 echo "# INSTALLDIR/usr/etc/fido/point.lst:"
@@ -46,5 +46,5 @@ cat INSTALLDIR/usr/etc/fido/point.lst | grep -v "#"
 echo  "#================================================="
 echo
 
-rm -rf "$TMP"
+rm -rf $TMP
 

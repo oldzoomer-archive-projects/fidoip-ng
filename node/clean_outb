@@ -10,7 +10,7 @@
 # This file is modified for fidoip. It is free software and it is covered
 # by the GNU general public license. See the file LICENSE for details. */
 
-USERNAME=$(whoami) ; T1="root"
+USERNAME=`whoami` ; T1="root"
 if [ "$T1" = "$USERNAME" ]; then 
 echo  'Please do not run this script as root' ; exit
 fi
@@ -19,33 +19,33 @@ OUTB_DIR=INSTALLDIR/fido/outbound
 LOCK_DIR=INSTALLDIR/fido
 LOCK_FILE=LCK..ttyS0
 
-for adir in $(ls -d $OUTB_DIR/*.pnt ; echo $OUTB_DIR) ; do
-    ls "$adir"/{*.spl,*.bsy} 1>/dev/null 2>/dev/null
+for adir in `ls -d $OUTB_DIR/*.pnt ; echo $OUTB_DIR` ; do
+    ls $adir/{*.spl,*.bsy} 1>/dev/null 2>/dev/null
     RC=$?
-    if [ $RC == 0 ] ; then
-        for afile in $(ls "$adir"/{*.spl,*.bsy} 2>/dev/null) ; do
-            if [ $LOCK_DIR/$LOCK_FILE -nt "$afile" ] ; then
+    if [ x$RC == x0 ] ; then
+        for afile in `ls $adir/{*.spl,*.bsy} 2>/dev/null` ; do
+            if [ $LOCK_DIR/$LOCK_FILE -nt $afile ] ; then
                 date +"%H:%M:%S %d %b"
                 echo " Removed stale file: $afile"
-                rm -f "$afile"
+                rm -f $afile
             fi
         done
     fi
-    ls "$adir"/* 1>/dev/null 2>/dev/null
+    ls $adir/* 1>/dev/null 2>/dev/null
     RC=$?
     if [ x$RC != x0 ] ; then
         date +"%H:%M:%S %d %b"
         echo " Removed empty dir: $adir"
-        rmdir "$adir"
+        rmdir $adir
     fi
 done
 
-for adir in $(ls -d $OUTB_DIR/*.sep 2>/dev/null ; ls -d $OUTB_DIR/*.pnt/*.sep 2>/dev/null) ; do
-    ls "$adir"/* 1>/dev/null 2>/dev/null
+for adir in `ls -d $OUTB_DIR/*.sep 2>/dev/null ; ls -d $OUTB_DIR/*.pnt/*.sep 2>/dev/null` ; do
+    ls $adir/* 1>/dev/null 2>/dev/null
     RC=$?
     if [ x$RC != x0 ] ; then
         date +"%H:%M:%S %d %b"
         echo " Removed empty dir: $adir"
-        rmdir "$adir"
+        rmdir $adir
     fi
 done

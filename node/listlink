@@ -2,8 +2,8 @@
 #   Copyright (c) by Maxim Sokolsky (2:5020/828.777). This file is part of fidoip. It is free software and it is covered
 #   by the GNU general public license. See the file LICENSE for details. */
 #  Shows list additional links in INSTALLDIR/usr/etc/fido/link.lst
-SYSOS=$(uname -s) # Packages architecture
-TMP=$(mktemp -d)	# Location of temp's files
+SYSOS=`uname -s` # Packages architecture
+TMP=`mktemp -d`	# Location of temp's files
 SEDT="sed"  # Sed program type
 
 T1="root"
@@ -47,5 +47,5 @@ echo "# INSTALLDIR/usr/etc/fido/link.lst:"
 echo "# ==================================================="
 cat INSTALLDIR/usr/etc/fido/link.lst | grep -v "#" | grep "password " 
 echo "# ==================================================="
-rm -rf "$TMP"
+rm -rf $TMP
 
