@@ -97,6 +97,9 @@ echomailflavour direct
 forwardrequests off
 linkdefaults end
 
+# Ремап нодовых писем на первого поинта
+Remap SYSTEM-OPERATOR-NAME,MYNODE-ADDRESS,MYNODE-ADDRESS.1
+
 # описание линков
 # не редактируйте этот файл руками
 # для внесения изменений используйте команды addlink и removelink
