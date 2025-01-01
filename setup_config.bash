@@ -591,9 +591,6 @@ cat "$CWD"/golded/nodelist.sh | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/b
 $SEDT -i -e '/NODELIST/!b' -e 's/net5020.ndl/nodelist.txt/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
 $SEDT -i -e '/NODELIST/!b' -e "/pnt5020.ndl/d" "$HOMEDIR"/usr/etc/golded+/golded.cfg
 
-$SEDT -i -e '/UseSoftCRxlat/!b' -e 's/Yes/No/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
-$SEDT -i -e '/DispSoftCr/!b' -e "s/Yes/No/g" "$HOMEDIR"/usr/etc/golded+/golded.cfg
-
 cp "$HOMEDIR"/usr/bin/send "$HOMEDIR"/usr/bin/rs
 
 cp "$CWD"/husky/checkhpt.sh "$HOMEDIR"/usr/bin/
