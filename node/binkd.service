@@ -1,5 +1,5 @@
 [Unit]
-Description=Ftn mailer binkd start service
+Description=FidoIP-NG BinkD Service
 After=network.target
 
 [Service]
