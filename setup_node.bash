@@ -754,7 +754,7 @@ set +e
 chmod 644 "$HOMEDIR"/fido/*.log
 chmod 644 "$HOMEDIR"/fido/*.txt
 chmod 644 "$HOMEDIR"/fido/*.hlp
-chmod 644 "$HOMEDIR"/fido/nodelist/nodelist.txt
+chmod 644 "$HOMEDIR"/fido/nodelist/nodelist.[0-9][0-9][0-9]
 chmod 644 "$HOMEDIR"/fido/nodelist/*.g*
 chmod 644 "$HOMEDIR"/usr/etc/*.cfg
 chmod 644 "$HOMEDIR"/usr/etc/*.conf-dist

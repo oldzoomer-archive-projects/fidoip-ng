@@ -41,7 +41,7 @@ brakebox  INSTALLDIR/fido/badarea
 prescan
 
 perl-hooks INSTALLDIR/usr/bin/nodelist.pl
-perl-var nodelist fidonet:INSTALLDIR/fido/nodelist/nodelist.txt
+perl-var nodelist fidonet:INSTALLDIR/fido/nodelist/nodelist.[0-9][0-9][0-9]
 perl-var magichost *
 
 # First and main link

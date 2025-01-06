@@ -122,7 +122,7 @@ cp -a chsgen/* "$PKG"/usr/etc/golded+/
 cp "$CWD"/golded.cfm "$PKG"/usr/etc/golded+/
 mkdir -p "$PKG"/fido
 mkdir -p "$PKG"/fido/nodelist
-cp "$CWD"/nodelist.txt "$PKG"/fido/nodelist/
+cp "$CWD"/nodelist.[0-9][0-9][0-9] "$PKG"/fido/nodelist/
 cp "$CWD"/goldnode.* "$PKG"/fido/nodelist/
 cat "$CWD"/nodelist.sh | sed "s|INSTALLDIR|$HOMEDIR|g" > "$PKG"/usr/bin/nodelist.sh
 chmod +x "$PKG"/usr/bin/nodelist.sh
