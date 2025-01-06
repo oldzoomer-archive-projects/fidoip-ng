@@ -58,12 +58,9 @@ Template        golded.tpl     "Основной шаблон"
 include         INSTALLDIR/usr/etc/golded+/gedcolor.cfg
 include         INSTALLDIR/usr/etc/golded+/goldkeys.cfg
 NodePath        INSTALLDIR/fido/nodelist
-; Измените net5020.ndl и pnt5020.ndl на соответсвующие вашему региону. 
-; Скопируйте эти файлы в INSTALLDIR/usr/etc/golded+ и перейдите в тот же каталог.
 ; Для генерации индекса запустите INSTALLDIR/usr/sbin/gnlnx -f golded.cfg
-NODELIST        net5020.ndl		; NodeList  @FidoNet ZONE 2
-NODELIST        pnt5020.ndl		; PointList @FidoNet 5020
-      
+NODELIST        nodelist.txt
+
 ;Nodelist net5020.* 2:5020/828.555
 ;Nodelist pnt5020.* 2:5020/828.555
 ;Nodelist 5020828.pnt 2:5020/828

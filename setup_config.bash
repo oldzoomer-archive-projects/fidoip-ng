@@ -576,9 +576,6 @@ $SEDT -i "s/12345678"/"$uplinkpassword""/" "$HOMEDIR"/usr/etc/fido/config
 
 $SEDT -i "s/828\.local"/"$nodeaddress"\.local"/" "$HOMEDIR"/usr/etc/fido/config
 
-$SEDT -i -e '/NODELIST/!b' -e 's/net5020.ndl/nodelist.txt/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
-$SEDT -i -e '/NODELIST/!b' -e "/pnt5020.ndl/d" "$HOMEDIR"/usr/etc/golded+/golded.cfg
-
 cp "$CWD"/node/toss "$HOMEDIR"/usr/bin/toss 
 $SEDT -i "s|INSTALLDIR|$HOMEDIR|g" "$HOMEDIR"/usr/bin/toss
 
@@ -587,9 +584,6 @@ cat "$CWD"/golded/ge | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/bin/ge
 cat "$CWD"/golded/g | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/bin/g
 cat "$CWD"/golded/gl | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/bin/gl
 cat "$CWD"/golded/nodelist.sh | sed "s|INSTALLDIR|$HOMEDIR|g" > "$HOMEDIR"/usr/bin/nodelist.sh
-
-$SEDT -i -e '/NODELIST/!b' -e 's/net5020.ndl/nodelist.txt/g' "$HOMEDIR"/usr/etc/golded+/golded.cfg
-$SEDT -i -e '/NODELIST/!b' -e "/pnt5020.ndl/d" "$HOMEDIR"/usr/etc/golded+/golded.cfg
 
 cp "$HOMEDIR"/usr/bin/send "$HOMEDIR"/usr/bin/rs
 
