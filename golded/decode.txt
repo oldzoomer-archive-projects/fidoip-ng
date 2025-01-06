@@ -27,7 +27,7 @@ AreaFile FidoConfig  INSTALLDIR/usr/etc/fido/config
 LOADLANGUAGE         INSTALLDIR/usr/etc/golded+/goldlang.cfg
 AREASCAN *
 EditSoftCrXLat H
-UseSoftCRxlat Yes            ;  EditCompletion "î"  "H"
+UseSoftCRxlat No            ;  EditCompletion "î"  "H"
 DispSoftCr Yes
 
 TAGLINESUPPORT Yes

@@ -26,7 +26,7 @@ SEMAPHORE IMPORTLIST  INSTALLDIR/fido/import.log
 AreaFile FidoConfig  INSTALLDIR/usr/etc/fido/config
 LOADLANGUAGE         INSTALLDIR/usr/etc/golded+/goldlang.cfg
 AREASCAN *
-UseSoftCRxlat Yes
+UseSoftCRxlat No
 EditSoftCrXLat H                     ;EditCompletion "î"  "H"
 DispSoftCr Yes
 
