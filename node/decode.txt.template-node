@@ -59,7 +59,7 @@ include         INSTALLDIR/usr/etc/golded+/gedcolor.cfg
 include         INSTALLDIR/usr/etc/golded+/goldkeys.cfg
 NodePath        INSTALLDIR/fido/nodelist
 ; Для генерации индекса запустите INSTALLDIR/usr/bin/gnlnx -f golded.cfg
-NODELIST        nodelist.txt
+NODELIST        nodelist.*
 
 ;Nodelist net5020.* MYNODE-ADDRESS
 ;Nodelist pnt5020.* MYNODE-ADDRESS
